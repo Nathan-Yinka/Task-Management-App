@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Case,When,ImageField,IntegerField
+from django.db.models import Case,When,IntegerField
 from django.contrib.auth import get_user_model
 from datetime import datetime, timedelta
 
@@ -14,16 +14,16 @@ class TaskQuerySet(models.QuerySet):
             filters['title__icontains'] = query
         
         if status:
-            filters['status'] = status
+            filters['status__iexact'] = status
         
         if priority:
-            filters['priority'] = priority
+            filters['priority__iexact'] = priority
         
         if due_date:
             filters['due_date__date'] = due_date
         
         if category:
-            filters['category'] = category
+            filters['category__icontains'] = category
         
         return self.filter(**filters)
 
@@ -67,8 +67,8 @@ class TaskManager(models.Manager):
     def order_by_priority(self):
         return self.get_queryset().order_by_priority()
       
-    def search(self):
-      return self.get_queryset().search(query=None, status=None, priority=None, due_date=None, category=None)
+    def search(self, query=None, status=None, priority=None, due_date=None, category=None):
+      return self.get_queryset().search(query=query, status=status, priority=priority, due_date=due_date, category=category)
 
 
 class Task(models.Model):
