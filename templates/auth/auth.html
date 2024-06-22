@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %} Login | Registration Form{% endblock title %}
+
+
+{% block content %}
+<div class="min-h-screen bg-backgroundColor flex items-center justify-center">
+    <!-- Navbar -->
+    {% include "auth/auth_nav.html" %}
+
+    <div class="max-w-[430px] mx-3 w-full bg-white rounded-lg shadow-xl">
+      <!-- Hidden checkbox -->
+      <input type="checkbox" id="check" class="hidden peer" {% if page == "signup" %}checked{% endif %}/>
+
+      <!-- Login Form -->
+      <div class="login form p-8 peer-checked:hidden ">
+        <header class="text-2xl font-medium text-center mb-6 text-darkBlue">
+          Login Form
+        </header>
+        <form action="/auth/" method="POST">
+            {% csrf_token %}
+          <input type="text" placeholder="Enter your email" name="username"
+            class="h-14 w-full px-4 text-lg mb-5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400" />
+          <input type="password" placeholder="Enter your password" name="password"
+            class="h-14 w-full px-4 text-lg mb-5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400" />
+          <!-- <a href="#" class="hover:underline">Forgot password?</a> -->
+          <button
+            class="w-full h-14 text-lg font-medium text-white rounded-md bg-darkBlue mt-1 cursor-pointer transition hover:bg-blue-800">
+            Login
+          </button>
+        </form>
+        <div class="signup text-center mt-4 text-xs">
+          Don't have an account?
+          <label for="check" class="text-darkBlue cursor-pointer hover:underline">Signup</label>
+        </div>
+      </div>
+
+      <!-- Signup Form -->
+      <div class="registration form p-8 hidden peer-checked:block ">
+        <header class="text-2xl font-medium text-center mb-6 text-darkBlue">
+          Signup Form
+        </header>
+        <form action="/auth/?type=signup" method="POST">
+            {% csrf_token %}
+          <input type="text" placeholder="Enter your username" name="username"
+            class="h-14 w-full px-4 text-lg mb-5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400" />
+          <input type="password" placeholder="Create a password" name="password1"
+            class="h-14 w-full px-4 text-lg mb-5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400" />
+          <input type="password" placeholder="Confirm your password" name="password2"
+            class="h-14 w-full px-4 text-lg mb-5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400" />
+          <button
+            class="w-full h-14 text-lg font-medium text-white rounded-md bg-darkBlue mt-1 cursor-pointer transition hover:bg-blue-800">
+            Signup
+          </button>
+        </form>
+        <div class="signup text-center mt-4 text-xs">
+          Already have an account?
+          <label for="check" class="text-darkBlue cursor-pointer hover:underline">Login</label>
+        </div>
+      </div>
+    </div>
+</div>
+
+  <script>
+    {% if form.errors %}
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                iziToast.error({
+                    title: '{% if field != "__all__" %} {{ field }} {% endif %}',
+                    message: '{{ error }}',
+                    position: 'topRight',
+                    class: "fixed top-20",
+                });
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+</script>
+
+{% endblock content %}
