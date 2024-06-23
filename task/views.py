@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from django.views.generic import ListView,FormView
@@ -18,14 +18,14 @@ User = get_user_model()
 
 class TaskListView(ListView):
     model = Task
-    template_name = 'auth/auth.html'
+    template_name = 'home.html'
     context_object_name = 'tasks'
     
     def get_context_data(self,*args, **kwargs):
         context = super().get_context_data(*args,**kwargs)
-        context["completed"] = self.get_completed_task()
-        context["in_progress"] = self.get_in_progress_task()
-        context["overdue"] = self.get_overdue_task()
+        context["completed_tasks"] = self.get_completed_task()
+        context["in_progress_tasks"] = self.get_in_progress_task()
+        context["overdue_tasks"] = self.get_overdue_task()
         context["form"] = TaskForm()
         
         return context
@@ -58,6 +58,11 @@ class AuthView(FormView):
     template_name = 'auth/auth.html'
     success_url = reverse_lazy("home")
     
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home')
+        return super().dispatch(request, *args, **kwargs)
+    
     def get_form_class(self):
         form_type = self.request.GET.get('type',None)
         if form_type == 'signup':
@@ -77,7 +82,6 @@ class AuthView(FormView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
-    
     
     
     

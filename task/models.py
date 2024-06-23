@@ -47,7 +47,7 @@ class TaskQuerySet(models.QuerySet):
             When(priority='High', then=3),
             output_field=IntegerField(),
         )
-        return self.annotate(priority_order=priority_order).order_by('priority_order',"due_date")
+        return self.annotate(priority_order=priority_order).order_by('-priority_order',"-due_date")
       
   
 class TaskManager(models.Manager):
@@ -110,4 +110,4 @@ class Task(models.Model):
         elif self.due_date.date() == tomorrow.date():
             return "Tomorrow"  # Return "Tomorrow" if due tomorrow
         else:
-            return self.due_date.strftime("%Y-%m-%d")  # Return full date for other days
+            return self.due_date.strftime("%Y/%m/%d")  # Return full date for other days

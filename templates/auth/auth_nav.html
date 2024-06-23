@@ -2,7 +2,9 @@
 
 <div class="fixed top-0 left-0 w-full flex justify-center items-center shadow bg-white">
     <div class="w-[95%] md:w-[80%] py-5 flex items-center">
-      <img src="{% static './images/logo.png' %}" alt="Logo" class="h-10" />
+      <a href="{% url 'home' %}" class="flex justify-center items-center shadow bg-white">
+        <img src="{% static './images/logo.png' %}" alt="Logo" class="h-10" />
       <span class="ml-2 text-xl font-bold text-darkBlue">Tasky</span>
+      </a>
     </div>
   </div>
