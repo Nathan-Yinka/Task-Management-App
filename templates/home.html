@@ -91,11 +91,12 @@
                 <i class="fas fa-search"></i>
                 <input
                   type="text"
+                  id="search_task"
                   placeholder="Search tasks"
                   class="py-2 w-full bg-transparent !outline-none !border-none focus:ring-0 ring-0"
                 />
               </div>
-              <button type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4 md:mb-0">Search</button>
+              <button type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4 md:mb-0" id="searchButton">Search</button>
           </div>
 
           <div class="flex items-center gap-5">
@@ -182,22 +183,7 @@
             <button id="doubleDropdownButton" data-dropdown-toggle="filtercatergorydropdown" data-dropdown-placement="right-start" type="button" class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Category<svg class="w-2.5 h-2.5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
       </svg></button>
-              <div id="doubleDropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="doubleDropdownButton">
-                  <li>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Overview</a>
-                  </li>
-                  <li>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">My downloads</a>
-                  </li>
-                  <li>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Billing</a>
-                  </li>
-                  <li>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Rewards</a>
-                  </li>
-                </ul>
-            </div>
+
 
 
             <!-- filter dropdown for priority -->
@@ -205,25 +191,25 @@
                 <ul class=" p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
                     <li>
                         <div class="flex items-center">
-                            <input checked id="prioritydefault-radio-0" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                            <input checked id="prioritydefault-radio-0" type="radio" value="" name="priority_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                             <label for="prioritydefault-radio-0" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">All</label>
                         </div>
                     </li>
                   <li>
                     <div class="flex items-center">
-                        <input id="prioritydefault-radio-1" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                        <input id="prioritydefault-radio-1" type="radio" value="low" name="priority_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                         <label for="prioritydefault-radio-1" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Low</label>
                     </div>
                   </li>
                   <li>
                     <div class="flex items-center">
-                        <input  id="prioritydefault-radio-2" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                        <input  id="prioritydefault-radio-2" type="radio" value="medium" name="priority_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                         <label for="prioritydefault-radio-2" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Medium</label>
                     </div>
                   </li>
                   <li>
                     <div class="flex items-center">
-                        <input id="prioritydefault-radio-3" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                        <input id="prioritydefault-radio-3" type="radio" value="high" name="priority_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                         <label for="prioritydefault-radio-3" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">High</label>
                     </div>
                   </li>
@@ -234,25 +220,25 @@
                 <ul class=" p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
                     <li>
                         <div class="flex items-center">
-                            <input checked id="srtatusdefault-radio-0" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                            <input checked id="srtatusdefault-radio-0" type="radio" value="" name="status_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                             <label for="srtatusdefault-radio-0" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">All</label>
                         </div>
                     </li>
                   <li>
                     <div class="flex items-center">
-                        <input id="srtatusdefault-radio-1" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                        <input id="srtatusdefault-radio-1" type="radio" value="In Progress" name="status_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                         <label for="srtatusdefault-radio-1" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">In Progress</label>
                     </div>
                   </li>
                   <li>
                     <div class="flex items-center">
-                        <input  id="srtatusdefault-radio-2" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                        <input  id="srtatusdefault-radio-2" type="radio" value="Completed" name="status_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                         <label for="srtatusdefault-radio-2" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Completed</label>
                     </div>
                   </li>
                   <li>
                     <div class="flex items-center">
-                        <input id="srtatusdefault-radio-3" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                        <input id="srtatusdefault-radio-3" type="radio" value="Overdue" name="status_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                         <label for="srtatusdefault-radio-3" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Overdue</label>
                     </div>
                   </li>
@@ -290,32 +276,20 @@
                 <ul class=" p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
                     <li>
                         <div class="flex items-center">
-                            <input checked id="categorydefault-radio-0" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                            <input checked id="categorydefault-radio-0" type="radio" value="" name="category_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                             <label for="categorydefault-radio-0" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">All</label>
                         </div>
                     </li>
-                  <li>
+                {% for category in categories %}
+                <li>
                     <div class="flex items-center">
-                        <input id="categorydefault-radio-1" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                        <label for="categorydefault-radio-1" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Low</label>
+                        <input id="categorydefault-radio-1-{{ forloop.counter }}" type="radio" value="{{ category }}" name="category_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                        <label for="categorydefault-radio-1-{{ forloop.counter }}" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ category }}</label>
                     </div>
                   </li>
-                  <li>
-                    <div class="flex items-center">
-                        <input  id="categorydefault-radio-2" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                        <label for="categorydefault-radio-2" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Medium</label>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="flex items-center">
-                        <input id="categorydefault-radio-3" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                        <label for="categorydefault-radio-3" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">High</label>
-                    </div>
-                  </li>
+                {% endfor %}
                 </ul>
             </div>
-    
-
         </ul>
     </div>
 
@@ -326,19 +300,19 @@
     <ul class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
       <li>
         <div class="flex items-center">
-            <input checked id="sortbydefault-radio-1" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+            <input checked id="sortbydefault-radio-1" type="radio" value="" name="sort_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
             <label for="sortbydefault-radio-1" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Default</label>
         </div>
       </li>
       <li>
         <div class="flex items-center">
-            <input  id="sortbydefault-radio-2" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+            <input  id="sortbydefault-radio-2" type="radio" value="" name="sort_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
             <label for="sortbydefault-radio-2" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Due Date</label>
         </div>
       </li>
       <li>
         <div class="flex items-center">
-            <input id="sortbydefault-radio-3" type="radio" value="" name="default-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+            <input id="sortbydefault-radio-3" type="radio" value="" name="sort_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
             <label for="sortbydefault-radio-3" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Priority</label>
         </div>
       </li>
@@ -545,14 +519,22 @@
                 $("#nav-menu").slideToggle("slow");
             }
         });
-    
-        // Adjust the menu visibility on window resize
+
         $(window).resize(function() {
             if ($(window).width() >= 1024) {
                 $("#nav-menu").show();
             } else {
                 $("#nav-menu").hide();
             }
+        });
+
+        $("#searchButton").click(function() {
+            const searchValue = $("#search_task").val();
+            const selectedPriority = $("input[name='priority_radio']:checked").val();
+            const selectedStatus = $("input[name='status_radio']:checked").val();
+            const selectedCategory = $("input[name='category_radio']:checked").val();
+            const start_date = $("#datepickerstart").val()
+            const end_date = $("#datepickerend").val()
         });
 
         $( "#datepickerend, #datepickerstart" ).datepicker();

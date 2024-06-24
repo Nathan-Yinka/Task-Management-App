@@ -7,7 +7,7 @@ User = get_user_model()
 
 class TaskQuerySet(models.QuerySet):
   
-    def search(self, query=None, status=None, priority=None, due_date=None, category=None):
+    def search(self, query=None, status=None, priority=None, start_date=None, end_date=None, category=None):
         filters = {}
         
         if query:
@@ -19,11 +19,11 @@ class TaskQuerySet(models.QuerySet):
         if priority:
             filters['priority__iexact'] = priority
         
-        if due_date:
-            filters['due_date__date'] = due_date
+        if start_date and end_date:
+            filters['due_date__range'] = (start_date, end_date)
         
         if category:
-            filters['category__icontains'] = category
+            filters['category__iexact'] = category
         
         return self.filter(**filters)
 
@@ -67,8 +67,9 @@ class TaskManager(models.Manager):
     def order_by_priority(self):
         return self.get_queryset().order_by_priority()
       
-    def search(self, query=None, status=None, priority=None, due_date=None, category=None):
-      return self.get_queryset().search(query=query, status=status, priority=priority, due_date=due_date, category=category)
+    def search(self, query=None, status=None, priority=None, start_date=None, end_date=None, category=None):
+        return self.get_queryset().search(query=query, status=status, priority=priority, start_date=start_date, 
+            end_date=end_date, category=category)
 
 
 class Task(models.Model):

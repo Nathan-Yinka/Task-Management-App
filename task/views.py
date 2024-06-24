@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
+from django.db.models.functions import Lower
 from django.urls import reverse_lazy
 from django.views.generic import ListView,FormView
 from django.contrib.auth import login, authenticate
@@ -26,6 +27,7 @@ class TaskListView(ListView):
         context["completed_tasks"] = self.get_completed_task()
         context["in_progress_tasks"] = self.get_in_progress_task()
         context["overdue_tasks"] = self.get_overdue_task()
+        context["categories"] = self.get_category_list()
         context["form"] = TaskForm()
         
         return context
@@ -41,6 +43,10 @@ class TaskListView(ListView):
     def get_overdue_task(self):
         overdued_tasks = Task.objects.overdue()
         return overdued_tasks
+    
+    def get_category_list(self):
+        categories = Task.objects.annotate(lower_category=Lower('category')).values_list('lower_category', flat=True).distinct()
+        return categories
         
 
 class TaskListApiView(TaskQueryMixin, generics.ListCreateAPIView):
