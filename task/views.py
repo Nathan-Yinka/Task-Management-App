@@ -51,6 +51,7 @@ class TaskListView(ListView):
 
 class TaskListApiView(TaskQueryMixin, generics.ListCreateAPIView):
     serializer_class = TaskSerializer
+    queryset = Task.objects.all()
         
 class TaskRetreieveUpdateDeleteApiView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TaskSerializer

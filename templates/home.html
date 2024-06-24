@@ -291,6 +291,7 @@
                 </ul>
             </div>
         </ul>
+        <div class=" bg-red-100 bg-darkGray bg-green-100"></div>
     </div>
 
 
@@ -334,8 +335,9 @@
                   <i class="fas fa-ellipsis-v"></i>
                 </div>
                 
+                <div id="in_progress_tasks">
                 {% for task in in_progress_tasks  %}
-                <div class="mt-10">
+                    <div class="mt-10">
                   <div class="flex gap-5 mb-2.5">
                     <span class="text-xs text-gray-500 py-1 px-3 rounded  shadow-lg {{ task.priority|priority_color }} "
                       >{{ task.priority }}</span
@@ -376,11 +378,13 @@
                   </div>
                 </div>
                 {% empty %}
+
                 <div class="flex justify-center bg-darkGray text-sm rounded mt-10">
                     <p class="text-sm">No Task In progress</p>
                 </div>
                 {% endfor %}
               </div>
+            </div>
             
 
 
@@ -527,19 +531,195 @@
                 $("#nav-menu").hide();
             }
         });
+        
+        $( "#datepickerend, #datepickerstart" ).datepicker();
 
         $("#searchButton").click(function() {
+            fetchTask();
+        });
+        let url = "http://127.0.0.1:8000/api/"
+
+
+        // get the filter values from the dom
+        function getFilterValue() {
             const searchValue = $("#search_task").val();
             const selectedPriority = $("input[name='priority_radio']:checked").val();
             const selectedStatus = $("input[name='status_radio']:checked").val();
             const selectedCategory = $("input[name='category_radio']:checked").val();
-            const start_date = $("#datepickerstart").val()
-            const end_date = $("#datepickerend").val()
+            const start_date = $("#datepickerstart").val();
+            const end_date = $("#datepickerend").val();
+        
+            return {
+                query:searchValue,
+                priority:selectedPriority,
+                status:selectedStatus,
+                category:selectedCategory,
+                start_date:start_date,
+                end_date:end_date
+            };
+        }
+        
+        //create the url with the query params
+        function create_search_url(url) {
+            const filters = getFilterValue();
+            let queryParams = [];
+        
+            // Iterate through filters and add non-empty values to queryParams
+            for (const key in filters) {
+                if (filters[key]) {
+                    queryParams.push(`${key}=${encodeURIComponent(filters[key])}`);
+                }
+            }
+        
+            // Construct the final URL with query parameters
+            if (queryParams.length > 0) {
+                const queryString = queryParams.join('&');
+                return `${url}?${queryString}`;
+            } else {
+                return url;
+            }
+        }
+        
+       // Define the async function to send HTTP requests
+async function SendHttpRequest(method, url, data = null) {
+    try {
+        // Use a Promise to wrap jQuery's AJAX call
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: url,
+                method: method.toUpperCase(),
+                dataType: 'json',
+                contentType: 'application/json',
+                data: data ? JSON.stringify(data) : null,
+                success: function(data) {
+                    resolve(data); // Resolve the Promise with the received data
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = errorThrown || textStatus;
+                    if (jqXHR.responseText) {
+                        errorMessage = jqXHR.responseJSON; // Use the responseText as error message if available
+                    }
+                    reject(errorMessage); // Reject the Promise with the error message
+                }
+            });
         });
-        let url = 'https://api.example.com/search';
+    } catch (error) {
+        throw new Error(`Error fetching data: ${error}`);
+    }
+}
 
-        $( "#datepickerend, #datepickerstart" ).datepicker();
+// Example usage within an async function
+async function fetchTask() {
+    try {
+        const method = "GET";
+        const searchUrl = create_search_url(url);
 
+        const responseData = await SendHttpRequest(method, (searchUrl));
+        const { inProgressTasks, completedTasks, overdueTasks } = filterData(responseData)
+        loadTasks(inProgressTasks,"in_progress_tasks","No Task In progress")
+    } catch (error) {
+        console.error( error);
+        error.forEach(err=>{
+            iziToast.error({
+                message: err,
+                position: 'topCenter',
+                class: "fixed top-20",
+            });
+        })
+    }
+}
+
+function loadTasks(tasksData,id,emptyMessage) {
+
+    const $taskListContainer = $(`#${id}`);
+    $taskListContainer.empty();
+
+    if (!tasksData.length){
+        $taskListContainer.append(`
+        <div class="flex justify-center bg-darkGray text-sm rounded mt-10">
+            <p class="text-sm">${emptyMessage}</p>
+        </div>
+        `)
+    }
+
+    $.each(tasksData, function(index, task) {
+        // Create elements to display task information
+        const $taskElement = $('<div></div>');
+        $taskElement.html(`
+        <div class="mt-10">
+            <div class="flex gap-5 mb-2.5">
+              <span class="text-xs text-gray-500 py-1 px-3 rounded  shadow-lg ${priorityColor(task.priority)}"
+                >${task.priority}</span
+              >
+              <span class="text-xs text-purple-500 py-1 px-3 rounded shadow-lg"
+                ><i class="far fa-clock me-2"></i>${task.formatted_due_date}</span
+              >
+              <span
+                class="text-xs bg-purple-100 text-purple-500 py-1 px-3 rounded  shadow-lg"
+                >${titleCase(task.category)}</span
+              >
+            </div>
+            <div class="bg-darkGray p-4 rounded shadow-md mb-4 flex flex-col h-[150px] justify-between py-2">
+             <div>
+              <h3 class="font-semibold mb-2">${titleCase(task.title)}</h3>
+              <p class="text-sm text-gray-600 mb-4">
+                ${truncateChars(task.description,100)}
+              </p>
+             </div>
+             <div class="">
+              <div class="flex items-center justify-between ">        
+              <div class="text-[8px] bg-[#374151] p-1 shadow rounded text-white">
+                  ${task.assigned_to.username}
+              </div>
+                  <div class="flex space-x-2">
+                    <button class="text-gray-400 hover:text-gray-600">
+                      <i class="far fa-eye"></i>
+                    </button>
+                    <button class="text-gray-400 hover:text-gray-600">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button class="text-gray-400 hover:text-gray-600">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                  </div>
+                </div>
+             </div>
+            </div>
+          </div>
+        `);
+        $taskListContainer.append($taskElement);
+    });
+}
+
+function priorityColor(value) {
+    const colorMap = {
+        'high': 'bg-red-100',
+        'medium': 'bg-darkGray',
+        'low': 'bg-green-100',
+    };
+    return colorMap[value.toLowerCase()] || 'bg-red-100';
+}
+
+function titleCase(str) {
+    return str.toLowerCase().split(' ').map(function(word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    }).join(' ');
+}
+
+function truncateChars(str, maxChars) {
+    if (str.length <= maxChars) {
+        return str;
+    }
+    return str.slice(0, maxChars) + '...';
+}
+
+function filterData(taskData) {
+    const inProgressTasks = taskData.filter(task => task.status.toLowerCase() === "in progress");
+    const completedTasks = taskData.filter(task => task.status.toLowerCase() === "completed");
+    const overdueTasks = taskData.filter(task => task.status.toLowerCase() === "overdue");
+
+    return { inProgressTasks, completedTasks, overdueTasks };
+}
 
     </script>
     {% endblock content %}

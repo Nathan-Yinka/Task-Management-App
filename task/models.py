@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Case,When,IntegerField
+from django.db.models import Case,When,IntegerField,Q
 from django.contrib.auth import get_user_model
 from datetime import datetime, timedelta
 
@@ -8,24 +8,24 @@ User = get_user_model()
 class TaskQuerySet(models.QuerySet):
   
     def search(self, query=None, status=None, priority=None, start_date=None, end_date=None, category=None):
-        filters = {}
+        filters = Q()
         
         if query:
-            filters['title__icontains'] = query
+            filters &= Q(title__icontains=query) | Q(description__icontains=query)
         
         if status:
-            filters['status__iexact'] = status
+            filters &= Q(status__iexact=status)
         
         if priority:
-            filters['priority__iexact'] = priority
+            filters &= Q(priority__iexact=priority)
         
         if start_date and end_date:
-            filters['due_date__range'] = (start_date, end_date)
+            filters &= Q(due_date__date__range=(start_date, end_date))
         
         if category:
-            filters['category__iexact'] = category
+            filters &= Q(category__iexact=category)
         
-        return self.filter(**filters)
+        return self.filter(filters)
 
     def completed(self):
         return self.filter(status="Completed").order_by_priority()

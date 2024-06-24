@@ -1,5 +1,10 @@
+from datetime import datetime
+
 from rest_framework.exceptions import ValidationError
+
 from task.models import Task
+from .utils import DateValidationUtility
+
 
 class TaskQueryMixin:
     
@@ -23,14 +28,11 @@ class TaskQueryMixin:
             priority_choices = {key.lower(): value for key, value in dict(Task.PRIORITY_CHOICES).items()}
             if priority.lower() not in priority_choices:
                 errors.append(f"Invalid priority '{priority}'. Valid choices are {', '.join(priority_choices.values())}.")
-        
-            
-        # Validate that end_date is greater than or equal to start_date
-        if (start_date and not end_date) or (end_date and not start_date):
-            errors.append("Both start_date and end_date must be provided together.")
-        if start_date and end_date and end_date < start_date:
-            errors.append("end_date must be greater than or equal to start_date.")
-            
+             
+        # Validate and parse start_date and end_date using DateValidationUtility   
+        start_date, end_date, date_errors = DateValidationUtility.validate_dates(start_date, end_date)
+        errors.extend(date_errors)
+    
         if errors:
             raise ValidationError(errors)
 
