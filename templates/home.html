@@ -323,7 +323,7 @@
        
 
         <!-- Task Columns -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-28">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-[35px] justify-between">
 
           <!-- In Progress Column -->
             <div>
@@ -536,6 +536,7 @@
             const start_date = $("#datepickerstart").val()
             const end_date = $("#datepickerend").val()
         });
+        let url = 'https://api.example.com/search';
 
         $( "#datepickerend, #datepickerstart" ).datepicker();
 
