@@ -13,7 +13,7 @@ from rest_framework import permissions
 from core.mixins import TaskQueryMixin
 from core.permissions import IsAssignedOrReadOnly
 from .models import Task
-from .serializers import TaskSerializer
+from .serializers import TaskSerializer,TaskReadSerializer
 from .form import TaskForm,SignUpForm,LoginForm
 
 User = get_user_model()
@@ -30,7 +30,8 @@ class TaskListView(ListView):
         context["in_progress_tasks"] = self.get_in_progress_task()
         context["overdue_tasks"] = self.get_overdue_task()
         context["categories"] = self.get_category_list()
-        context["form"] = TaskForm()
+        if self.request.user.is_authenticated:
+            context['users'] = User.objects.all().exclude(id=self.request.user.id)
         
         return context
         
@@ -52,13 +53,23 @@ class TaskListView(ListView):
         
 
 class TaskListApiView(TaskQueryMixin, generics.ListCreateAPIView):
-    serializer_class = TaskSerializer
     queryset = Task.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return TaskReadSerializer
+        else:
+            return TaskSerializer
         
 class TaskRetreieveUpdateDeleteApiView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = TaskSerializer
     queryset = Task.objects.all()
     permission_classes = [IsAssignedOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return TaskReadSerializer
+        else:
+            return TaskSerializer
         
 # -------------------- User Authentication ---------------------------------
 

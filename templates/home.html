@@ -1,436 +1,798 @@
-{% extends "base.html" %}
-{% load static %}
-{% load custom_filters %}
-
-
+{% extends "base.html" %} 
+{% load static %} 
+{% load custom_filters %} 
 {% block content %}
-    <div class="flex flex-col lg:flex-row">
-      <!-- Sidebar -->
-      <div class="w-full flex flex-col lg:w-64 bg-lightGray p-4 lg:h-screen lg:fixed">
-        <div class="flex items-center justify-between lg:mb-8">
-          <a href="{% url 'home' %}" class="flex items-center">
-            <img src="{% static '/images/logo.png' %}" alt="Logo" class="h-10" />
-            <span class="ml-2 text-xl font-bold text-darkBlue">Tasky</span>
+<div class="flex flex-col lg:flex-row">
+  <!-- Sidebar -->
+  <div
+    class="w-full flex flex-col lg:w-64 bg-lightGray p-4 lg:h-screen lg:fixed"
+  >
+    <div class="flex items-center justify-between lg:mb-8">
+      <a href="{% url 'home' %}" class="flex items-center">
+        <img src="{% static '/images/logo.png' %}" alt="Logo" class="h-10" />
+        <span class="ml-2 text-xl font-bold text-darkBlue">Tasky</span>
+      </a>
+      <button id="menu-toggle" class="block lg:hidden focus:outline-none">
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          ></path>
+        </svg>
+      </button>
+    </div>
+
+    <div id="nav-menu" class="hidde lg:flex h-full w-full mt-10 lg:mt-0">
+      <div
+        class="flex gap-3 flex-wrap lg:flex-col w-full h-full items-center lg:items-start"
+      >
+        <nav
+          class="w-full flex items-start lg:items-start flex-1 flex-col space-y-2"
+        >
+          <a
+            href="#"
+            class="flex items-center gap-2 lg:w-full text-white py-2 px-4 rounded-lg bg-darkBlue"
+            ><i class="fa-solid fa-house"></i>Dashboard</a
+          >
+          <a
+            href="#"
+            class="flex items-center gap-2 lg:w-full text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-100"
+            ><i class="fas fa-user-friends"></i>Members</a
+          >
+          {% if not request.user.is_authenticated %}
+          <a
+            href="/auth/"
+            class="flex items-center gap-2 lg:w-full text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-100"
+            ><i class="fa-solid fa-right-to-bracket"></i>Login</a
+          >
+          {% else %}
+          <a
+            href="/logout/"
+            class="flex items-center gap-2 lg:w-full text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-100"
+            ><i class="fa-solid fa-right-from-bracket fa-flip-horizontal"></i
+            >Logout</a
+          >
+          {% endif %}
+        </nav>
+        <div
+          class="relative lg:mt-5 lg:mt-auto lg:flex lg:h-[100px] max-w-[200px] w-full lg:max-w-full"
+        >
+          <a
+            href="#"
+            class="hidden w-full lg:flex gap-2 lg:flex-col flex-row-reverse items-center justify-center lg:justify-end p-3 bg-gradient-to-r from-[#8D68FF] to-[#6265E7] text-white rounded-lg"
+          >
+            <img
+              src="{% static './images/rocket-icon.png' %}"
+              alt="Upgrade"
+              class="lg:absolute bottom-[30%] h-[30px] lg:h-[100px]"
+            />
+            <span>Upgrade to Pro</span>
           </a>
-          <button id="menu-toggle" class="block lg:hidden focus:outline-none">
-            <svg
-              class="w-6 h-6"
-              fill="none"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex-1 p-4 md:p-8 lg:ms-64">
+    <!-- Search -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+      <div class="flex gap-2 justify-center items-center">
+        <div
+          class="flex items-center gap-2 w-full md:w-72 text-black/50 bg-darkGray px-4 mb-4 md:mb-0 border-0 rounded-lg"
+        >
+          <i class="fas fa-search"></i>
+          <input
+            type="text"
+            id="search_task"
+            placeholder="Search tasks"
+            class="py-2 w-full bg-transparent !outline-none !border-none focus:ring-0 ring-0"
+          />
+        </div>
+        <button
+          type="button"
+          class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4 md:mb-0"
+          id="searchButton"
+        >
+          Search
+        </button>
+      </div>
+
+      <div class="flex items-center gap-5">
+        {% if request.user.is_authenticated %}
+        <div
+          class="text-[8px] bg-[#374151] p-1 shadow rounded text-white text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-4 md:mb-0"
+        >
+          {{ request.user }}
+        </div>
+        {% else %}
+        <a
+          href="/auth/"
+          class="text-[8px] bg-[#374151] p-1 shadow rounded text-white text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-4 md:mb-0 hidden lg:block"
+        >
+          Login
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div
+      class="flex gap-5 flex-wrap justify-center md:justify-between items-center mb-8"
+    >
+      <div class="flex gap-5 text-sm">
+        <button
+          id="dropdownRadioBgHoverButton"
+          data-dropdown-toggle="filterDropDown"
+          class="text-black bg-darkGray/50 hover:bg-darkGray font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          type="button"
+        >
+          <i class="fas fa-filter text-xs mr-1"></i>Filter
+          <svg
+            class="w-2.5 h-2.5 ms-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 6"
+          >
+            <path
               stroke="currentColor"
-              viewBox="0 0 24 24"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 4 4 4-4"
+            />
+          </svg>
+        </button>
+        <button
+          id="dropdownRadioBgHoverButton"
+          data-dropdown-toggle="SortDropDown"
+          class="text-black bg-darkGray/50 hover:bg-darkGray font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          type="button"
+        >
+          <i class="fas fa-arrows-alt-v text-xs mr-1"></i>Sort by
+          <svg
+            class="w-2.5 h-2.5 ms-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 6"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 4 4 4-4"
+            />
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4 md:mb-0"
+          id="fiterandsortButton"
+        >
+          Apply
+        </button>
+      </div>
+      <!-- Add Task -->
+      <div class="flex items-center gap-5">
+        <div class="flex items-center gap-3">
+          <div class="flex -space-x-2">
+            <img
+              src="{% static './images/avatar1.jpg' %}"
+              alt="User"
+              class="w-6 h-6 rounded-full border-2 border-white"
+            />
+            <img
+              src="{% static './images/avatar3.png' %}"
+              alt="User"
+              class="w-6 h-6 rounded-full border-2 border-white"
+            />
+            <img
+              src="{% static './images/avatar2.avif' %}"
+              alt="User"
+              class="w-6 h-6 rounded-full border-2 border-white"
+            />
+            <img
+              src="{% static './images/avatar3.png' %}"
+              alt="User"
+              class="w-6 h-6 rounded-full border-2 border-white"
+            />
+            <div
+              class="flex justify-center items-center text-white text-[10px] w-6 h-6 rounded-full border-2 border-darkGray bg-[#3938E6]"
+            >
+              +2
+            </div>
+          </div>
+          <div
+            class="flex items-center justify-center w-6 h-6 border-2 border-dotted border-gray-300 text-gray-500 rounded-full"
+          >
+            +
+          </div>
+        </div>
+        <button
+          class="bg-darkBlue text-white py-2 px-4 rounded-lg"
+          id="add-task-btn"
+        >
+          + Add Task
+        </button>
+      </div>
+
+      <!-- Filter drop Down menu -->
+      <div
+        id="filterDropDown"
+        class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+      >
+        <ul
+          class="py-2 text-sm text-gray-700 dark:text-gray-200"
+          aria-labelledby="multiLevelDropdownButton"
+        >
+          <button
+            id="doubleDropdownButton"
+            data-dropdown-toggle="priorityfilterdoubleDropdown"
+            data-dropdown-placement="right-start"
+            type="button"
+            class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            Priority<svg
+              class="w-2.5 h-2.5 ms-3 rtl:rotate-180"
+              aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 6 10"
             >
               <path
+                stroke="currentColor"
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              ></path>
+                d="m1 9 4-4-4-4"
+              />
             </svg>
           </button>
-        </div>
 
-        <div id="nav-menu" class="hidde lg:flex h-full w-full mt-10 lg:mt-0">
-          <div
-            class="flex gap-3 flex-wrap lg:flex-col w-full h-full items-center lg:items-start"
+          <button
+            id="doubleDropdownButton"
+            data-dropdown-toggle="duedatefilterdoubleDropdown"
+            data-dropdown-ignore-click-outside-class="datepicker111"
+            data-dropdown-placement="right-start"
+            type="button"
+            class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
-            <nav
-              class="w-full flex items-start lg:items-start  flex-1 flex-col space-y-2"
+            Due Date<svg
+              class="w-2.5 h-2.5 ms-3 rtl:rotate-180"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 6 10"
             >
-              <a
-                href="#"
-                class="flex items-center gap-2 lg:w-full text-white py-2 px-4 rounded-lg bg-darkBlue"
-                ><i class="fa-solid fa-house"></i>Dashboard</a
-              >
-              <a
-                href="#"
-                class="flex items-center gap-2 lg:w-full text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-100"
-                ><i class="fas fa-user-friends"></i>Members</a
-              >
-              {% if not request.user.is_authenticated %}
-              <a
-                href="/auth/"
-                class="flex items-center gap-2 lg:w-full text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-100"
-                ><i class="fa-solid fa-right-to-bracket"></i>Login</a
-              >
-              {% else %}
-              <a
-                href="/logout/"
-                class="flex items-center gap-2 lg:w-full text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-100"
-                ><i class="fa-solid fa-right-from-bracket fa-flip-horizontal"></i>Logout</a
-              >
-              {% endif %}
-            </nav>
-            <div
-              class="relative lg:mt-5 lg:mt-auto lg:flex lg:h-[100px] max-w-[200px] w-full lg:max-w-full"
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 9 4-4-4-4"
+              />
+            </svg>
+          </button>
+          <button
+            id="doubleDropdownButton"
+            data-dropdown-toggle="statusfilterdoubleDropdown"
+            data-dropdown-placement="right-start"
+            type="button"
+            class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            Status<svg
+              class="w-2.5 h-2.5 ms-3 rtl:rotate-180"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 6 10"
             >
-              <a
-                href="#"
-                class="hidden w-full lg:flex gap-2 lg:flex-col flex-row-reverse items-center justify-center lg:justify-end p-3 bg-gradient-to-r from-[#8D68FF] to-[#6265E7] text-white rounded-lg"
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 9 4-4-4-4"
+              />
+            </svg>
+          </button>
+          <button
+            id="doubleDropdownButton"
+            data-dropdown-toggle="filtercatergorydropdown"
+            data-dropdown-placement="right-start"
+            type="button"
+            class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            Category<svg
+              class="w-2.5 h-2.5 ms-3 rtl:rotate-180"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 6 10"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 9 4-4-4-4"
+              />
+            </svg>
+          </button>
+
+          <!-- filter dropdown for priority -->
+          <div
+            id="priorityfilterdoubleDropdown"
+            class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
+          >
+            <ul
+              class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
+              aria-labelledby="dropdownRadioButton"
+            >
+              <li>
+                <div class="flex items-center">
+                  <input
+                    checked
+                    id="prioritydefault-radio-0"
+                    type="radio"
+                    value=""
+                    name="priority_radio"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                  />
+                  <label
+                    for="prioritydefault-radio-0"
+                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >All</label
+                  >
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <input
+                    id="prioritydefault-radio-1"
+                    type="radio"
+                    value="low"
+                    name="priority_radio"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                  />
+                  <label
+                    for="prioritydefault-radio-1"
+                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Low</label
+                  >
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <input
+                    id="prioritydefault-radio-2"
+                    type="radio"
+                    value="medium"
+                    name="priority_radio"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                  />
+                  <label
+                    for="prioritydefault-radio-2"
+                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Medium</label
+                  >
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <input
+                    id="prioritydefault-radio-3"
+                    type="radio"
+                    value="high"
+                    name="priority_radio"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                  />
+                  <label
+                    for="prioritydefault-radio-3"
+                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >High</label
+                  >
+                </div>
+              </li>
+            </ul>
+          </div>
+          <!-- filter dropdown for status -->
+          <div
+            id="statusfilterdoubleDropdown"
+            class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
+          >
+            <ul
+              class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
+              aria-labelledby="dropdownRadioButton"
+            >
+              <li>
+                <div class="flex items-center">
+                  <input
+                    checked
+                    id="srtatusdefault-radio-0"
+                    type="radio"
+                    value=""
+                    name="status_radio"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                  />
+                  <label
+                    for="srtatusdefault-radio-0"
+                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >All</label
+                  >
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <input
+                    id="srtatusdefault-radio-1"
+                    type="radio"
+                    value="In Progress"
+                    name="status_radio"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                  />
+                  <label
+                    for="srtatusdefault-radio-1"
+                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >In Progress</label
+                  >
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <input
+                    id="srtatusdefault-radio-2"
+                    type="radio"
+                    value="Completed"
+                    name="status_radio"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                  />
+                  <label
+                    for="srtatusdefault-radio-2"
+                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Completed</label
+                  >
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <input
+                    id="srtatusdefault-radio-3"
+                    type="radio"
+                    value="Overdue"
+                    name="status_radio"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                  />
+                  <label
+                    for="srtatusdefault-radio-3"
+                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Overdue</label
+                  >
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- --------------------date drop down---------------------- -->
+          <div
+            id="duedatefilterdoubleDropdown"
+            class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
+          >
+            <div class="p-3" aria-labelledby="dateRangeButton">
+              <div
+                date-rangepicker
+                datepicker111
+                datepicker-autohide
+                class="flex items-center flex-wrap gap-3"
               >
-                <img
-                  src="{% static './images/rocket-icon.png' %}"
-                  alt="Upgrade"
-                  class="lg:absolute bottom-[30%] h-[30px] lg:h-[100px]"
-                />
-                <span>Upgrade to Pro</span>
-              </a>
+                <div class="relative">
+                  <div
+                    class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+                  >
+                    <svg
+                      class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    name="start"
+                    type="text"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Start date"
+                    id="datepickerstart"
+                  />
+                </div>
+
+                <div class="relative">
+                  <div
+                    class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+                  >
+                    <svg
+                      class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    name="end"
+                    type="text"
+                    id="datepickerend"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="End date"
+                  />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+
+          <!-- -------------catergory filter drop down -->
+          <div
+            id="filtercatergorydropdown"
+            class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 max-h-48 py-2 overflow-y-auto"
+          >
+            <ul
+              class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
+              aria-labelledby="dropdownRadioButton"
+            >
+              <li>
+                <div class="flex items-center">
+                  <input
+                    checked
+                    id="categorydefault-radio-0"
+                    type="radio"
+                    value=""
+                    name="category_radio"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                  />
+                  <label
+                    for="categorydefault-radio-0"
+                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >All</label
+                  >
+                </div>
+              </li>
+              {% for category in categories %}
+              <li>
+                <div class="flex items-center">
+                  <input
+                    id="categorydefault-radio-1-{{ forloop.counter }}"
+                    type="radio"
+                    value="{{ category }}"
+                    name="category_radio"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                  />
+                  <label
+                    for="categorydefault-radio-1-{{ forloop.counter }}"
+                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >{{ category }}</label
+                  >
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </ul>
+        <div class="bg-red-100 bg-darkGray bg-green-100"></div>
       </div>
 
-      <!-- Main Content -->
-      <div class="flex-1 p-4 md:p-8 lg:ms-64">
-        <!-- Search -->
-        <div
-          class="flex flex-col md:flex-row justify-between items-center mb-8"
+      <!-- sort drop down menu -->
+      <!-- Dropdown menu -->
+      <div
+        id="SortDropDown"
+        class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
+      >
+        <ul
+          class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
+          aria-labelledby="dropdownRadioButton"
         >
-          <div class="flex gap-2 justify-center items-center">
-            <div class="flex items-center gap-2 w-full md:w-72 text-black/50 bg-darkGray px-4 mb-4 md:mb-0 border-0 rounded-lg">
-                <i class="fas fa-search"></i>
-                <input
-                  type="text"
-                  id="search_task"
-                  placeholder="Search tasks"
-                  class="py-2 w-full bg-transparent !outline-none !border-none focus:ring-0 ring-0"
-                />
-              </div>
-              <button type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4 md:mb-0" id="searchButton">Search</button>
+          <li>
+            <div class="flex items-center">
+              <input
+                checked
+                id="sortbydefault-radio-1"
+                type="radio"
+                value=""
+                name="sort_radio"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label
+                for="sortbydefault-radio-1"
+                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >Default</label
+              >
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <input
+                id="sortbydefault-radio-2"
+                type="radio"
+                value="due_date"
+                name="sort_radio"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label
+                for="sortbydefault-radio-2"
+                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >Due Date</label
+              >
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <input
+                id="sortbydefault-radio-3"
+                type="radio"
+                value="priority"
+                name="sort_radio"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+              />
+              <label
+                for="sortbydefault-radio-3"
+                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >Priority</label
+              >
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Task Columns -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-[50px] justify-between"
+      >
+        <!-- In Progress Column -->
+        <div>
+          <div
+            class="flex justify-between items-center gap-1 text-[14px] font-semibold border-2 border-borderColor px-3 py-1 rounded mb-4"
+          >
+            <h2>
+              In Progress
+              <span class="text-[10px]" id="in_progress_count_con"
+                >({{ in_progress_tasks.count }})</span
+              >
+            </h2>
+            <i class="fas fa-ellipsis-v"></i>
           </div>
 
-          <div class="flex items-center gap-5">
-           
-           {% if request.user.is_authenticated %}
-            <div class="text-[8px] bg-[#374151] p-1 shadow rounded text-white text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-4 md:mb-0">
-              {{ request.user }}
-          </div>
-          {% else %}
-          <a href="/auth/" class="text-[8px] bg-[#374151] p-1 shadow rounded text-white text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-4 md:mb-0 hidden lg:block">
-              Login
-          </a>
-           {% endif %}
-            
-          </div>
-        </div>
-
-        
-        <div
-          class="flex gap-5 flex-wrap justify-center md:justify-between items-center mb-8"
-        >
-          <div class="flex gap-5 text-sm">
-            <button id="dropdownRadioBgHoverButton" data-dropdown-toggle="filterDropDown" class="text-black bg-darkGray/50 hover:bg-darkGray font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button"><i class="fas fa-filter text-xs mr-1"></i>Filter <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                </svg>
-
-                </button>
-            <button id="dropdownRadioBgHoverButton" data-dropdown-toggle="SortDropDown" class="text-black bg-darkGray/50 hover:bg-darkGray font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button"><i class="fas fa-arrows-alt-v text-xs mr-1"></i>Sort by <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                </svg>
-                </button>
-
-                <button type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4 md:mb-0" id="fiterandsortButton">Apply</button>
-                
-          </div>
-        <!-- Add Task -->
-          <div class="flex items-center gap-5">
-            <div class="flex items-center gap-3">
-              <div class="flex -space-x-2">
-                <img
-                  src="{% static './images/avatar1.jpg' %}"
-                  alt="User"
-                  class="w-6 h-6 rounded-full border-2 border-white"
-                />
-                <img
-                  src="{% static './images/avatar3.png' %}"
-                  alt="User"
-                  class="w-6 h-6 rounded-full border-2 border-white"
-                />
-                <img
-                  src="{% static './images/avatar2.avif' %}"
-                  alt="User"
-                  class="w-6 h-6 rounded-full border-2 border-white"
-                />
-                <img
-                  src="{% static './images/avatar3.png' %}"
-                  alt="User"
-                  class="w-6 h-6 rounded-full border-2 border-white"
-                />
-                <div
-                  class="flex justify-center items-center text-white text-[10px] w-6 h-6 rounded-full border-2 border-darkGray bg-[#3938E6]"
+          <div
+            id="in_progress_tasks"
+            class="!min-h-[50vh] sortable-list"
+            data-column="In Progress"
+          >
+            {% for task in in_progress_tasks %}
+            <div class="mt-10 handle" data-task-id="{{ task.id }}">
+              <div class="flex gap-5 mb-2.5">
+                <span
+                  class="text-xs text-gray-500 py-1 px-3 rounded  shadow-lg {{ task.priority|priority_color }} "
+                  >{{ task.priority }}</span
                 >
-                  +2
-                </div>
+                <span
+                  class="text-xs text-purple-500 py-1 px-3 rounded shadow-lg"
+                  ><i class="far fa-clock me-2"></i>{{
+                  task.get_formatted_due_date }}</span
+                >
+                <span
+                  class="text-xs bg-purple-100 text-purple-500 py-1 px-3 rounded shadow-lg"
+                  >{{ task.category|title }}</span
+                >
               </div>
               <div
-                class="flex items-center justify-center w-6 h-6 border-2 border-dotted border-gray-300 text-gray-500 rounded-full"
+                class="bg-darkGray p-4 rounded shadow-md mb-4 flex flex-col h-[150px] justify-between py-2"
               >
-                +
+                <div>
+                  <h3 class="font-semibold mb-2">{{ task.title|title }}</h3>
+                  <p class="text-sm text-gray-600 mb-4">
+                    {{ task.description|truncatechars:100 }}
+                  </p>
+                </div>
+                <div class="">
+                  <div class="flex items-center justify-between">
+                    <div
+                      class="text-[8px] bg-[#374151] p-1 shadow rounded text-white"
+                    >
+                      {{ task.assigned_to.username }}
+                    </div>
+                    <div class="flex space-x-2">
+                      <button class="text-gray-400 hover:text-gray-600">
+                        <i class="far fa-eye"></i>
+                      </button>
+                      <button class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                      <button class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <button class="bg-darkBlue text-white py-1 text-sm px-4 rounded-lg">
-              + Add Task
-            </button>
+            {% comment %} {% empty %}
+
+            <div class="flex justify-center bg-darkGray text-sm rounded mt-10">
+              <p class="text-sm">No Task In progress</p>
+            </div>
+            {% endcomment %} {% endfor %}
           </div>
-    
-    
-    <!-- Filter drop Down menu -->
-    <div id="filterDropDown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="multiLevelDropdownButton">
-            <button id="doubleDropdownButton" data-dropdown-toggle="priorityfilterdoubleDropdown" data-dropdown-placement="right-start" type="button" class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Priority<svg class="w-2.5 h-2.5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-      </svg></button>
-
-            <button id="doubleDropdownButton" data-dropdown-toggle="duedatefilterdoubleDropdown"  data-dropdown-ignore-click-outside-class="datepicker111" data-dropdown-placement="right-start" type="button" class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Due Date<svg class="w-2.5 h-2.5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-      </svg></button>
-            <button id="doubleDropdownButton" data-dropdown-toggle="statusfilterdoubleDropdown" data-dropdown-placement="right-start" type="button" class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Status<svg class="w-2.5 h-2.5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-      </svg></button>
-            <button id="doubleDropdownButton" data-dropdown-toggle="filtercatergorydropdown" data-dropdown-placement="right-start" type="button" class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Category<svg class="w-2.5 h-2.5 ms-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-      </svg></button>
-
-
-
-            <!-- filter dropdown for priority -->
-            <div id="priorityfilterdoubleDropdown" class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
-                <ul class=" p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
-                    <li>
-                        <div class="flex items-center">
-                            <input checked id="prioritydefault-radio-0" type="radio" value="" name="priority_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                            <label for="prioritydefault-radio-0" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">All</label>
-                        </div>
-                    </li>
-                  <li>
-                    <div class="flex items-center">
-                        <input id="prioritydefault-radio-1" type="radio" value="low" name="priority_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                        <label for="prioritydefault-radio-1" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Low</label>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="flex items-center">
-                        <input  id="prioritydefault-radio-2" type="radio" value="medium" name="priority_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                        <label for="prioritydefault-radio-2" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Medium</label>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="flex items-center">
-                        <input id="prioritydefault-radio-3" type="radio" value="high" name="priority_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                        <label for="prioritydefault-radio-3" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">High</label>
-                    </div>
-                  </li>
-                </ul>
-            </div>
-            <!-- filter dropdown for status -->
-            <div id="statusfilterdoubleDropdown" class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
-                <ul class=" p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
-                    <li>
-                        <div class="flex items-center">
-                            <input checked id="srtatusdefault-radio-0" type="radio" value="" name="status_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                            <label for="srtatusdefault-radio-0" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">All</label>
-                        </div>
-                    </li>
-                  <li>
-                    <div class="flex items-center">
-                        <input id="srtatusdefault-radio-1" type="radio" value="In Progress" name="status_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                        <label for="srtatusdefault-radio-1" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">In Progress</label>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="flex items-center">
-                        <input  id="srtatusdefault-radio-2" type="radio" value="Completed" name="status_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                        <label for="srtatusdefault-radio-2" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Completed</label>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="flex items-center">
-                        <input id="srtatusdefault-radio-3" type="radio" value="Overdue" name="status_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                        <label for="srtatusdefault-radio-3" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Overdue</label>
-                    </div>
-                  </li>
-                </ul>
-            </div>
-
-            <!-- --------------------date drop down---------------------- -->
-            <div id="duedatefilterdoubleDropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
-                <div class="p-3" aria-labelledby="dateRangeButton">
-                  <div date-rangepicker datepicker111 datepicker-autohide class="flex items-center flex-wrap gap-3" >
-                      <div class="relative"> 
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
-                            </svg>
-                        </div>
-                        <input name="start" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Start date" id="datepickerstart">
-                      </div>
-
-                      <div class="relative">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
-                            </svg>
-                        </div>
-                        <input name="end" type="text"  id="datepickerend" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="End date">
-                    </div>
-                  </div>
-                </div>
-            </div>
-
-
-            <!-- -------------catergory filter drop down -->    
-            <div id="filtercatergorydropdown" class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 max-h-48 py-2 overflow-y-auto" >
-                <ul class=" p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
-                    <li>
-                        <div class="flex items-center">
-                            <input checked id="categorydefault-radio-0" type="radio" value="" name="category_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                            <label for="categorydefault-radio-0" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">All</label>
-                        </div>
-                    </li>
-                {% for category in categories %}
-                <li>
-                    <div class="flex items-center">
-                        <input id="categorydefault-radio-1-{{ forloop.counter }}" type="radio" value="{{ category }}" name="category_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                        <label for="categorydefault-radio-1-{{ forloop.counter }}" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ category }}</label>
-                    </div>
-                  </li>
-                {% endfor %}
-                </ul>
-            </div>
-        </ul>
-        <div class=" bg-red-100 bg-darkGray bg-green-100"></div>
-    </div>
-
-
-    <!-- sort drop down menu -->
-    <!-- Dropdown menu -->
-<div id="SortDropDown" class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
-    <ul class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
-      <li>
-        <div class="flex items-center">
-            <input checked id="sortbydefault-radio-1" type="radio" value="" name="sort_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-            <label for="sortbydefault-radio-1" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Default</label>
         </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-            <input  id="sortbydefault-radio-2" type="radio" value="due_date" name="sort_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-            <label for="sortbydefault-radio-2" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Due Date</label>
-        </div>
-      </li>
-      <li>
-        <div class="flex items-center">
-            <input id="sortbydefault-radio-3" type="radio" value="priority" name="sort_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-            <label for="sortbydefault-radio-3" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Priority</label>
-        </div>
-      </li>
-    </ul>
-</div>
-    
 
-       
+        <!-- Completed Task Column -->
+        <div>
+          <div
+            class="flex justify-between items-center gap-1 text-[14px] font-semibold border-2 border-borderColor px-3 py-1 rounded mb-4 mt-16 md:mt-0"
+          >
+            <h2>
+              Completed Tasks
+              <span class="text-[10px]" id="completed_counnt_con"
+                >({{ completed_tasks.count }})</span
+              >
+            </h2>
+            <i class="fas fa-ellipsis-v"></i>
+          </div>
 
-        <!-- Task Columns -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-[35px] justify-between">
-
-          <!-- In Progress Column -->
-            <div>
-                <div
-                  class="flex justify-between items-center gap-1 text-[14px] font-semibold border-2 border-borderColor px-3  py-1 rounded mb-4"
-                >
-                  <h2>In Progress <span class="text-[10px]" id="in_progress_count_con">({{ in_progress_tasks.count }})</span></h2>
-                  <i class="fas fa-ellipsis-v"></i>
-                </div>
-                
-                <div id="in_progress_tasks" class="!min-h-[50vh] sortable-list" data-column="In Progress">
-                {% for task in in_progress_tasks  %}
-                    <div class="mt-10 handle" data-task-id="{{ task.id }}">
-                  <div class="flex gap-5 mb-2.5">
-                    <span class="text-xs text-gray-500 py-1 px-3 rounded  shadow-lg {{ task.priority|priority_color }} "
-                      >{{ task.priority }}</span
-                    >
-                    <span class="text-xs text-purple-500 py-1 px-3 rounded shadow-lg"
-                      ><i class="far fa-clock me-2"></i>{{ task.get_formatted_due_date }}</span
-                    >
-                    <span
-                      class="text-xs bg-purple-100 text-purple-500 py-1 px-3 rounded  shadow-lg"
-                      >{{ task.category|title }}</span
-                    >
-                  </div>
-                  <div class="bg-darkGray p-4 rounded shadow-md mb-4 flex flex-col h-[150px] justify-between py-2">
-                   <div>
-                    <h3 class="font-semibold mb-2">{{ task.title|title }}</h3>
-                    <p class="text-sm text-gray-600 mb-4">
-                      {{ task.description|truncatechars:100  }}
-                    </p>
-                   </div>
-                   <div class="">
-                    <div class="flex items-center justify-between ">        
-                    <div class="text-[8px] bg-[#374151] p-1 shadow rounded text-white">
-                        {{ task.assigned_to.username }}
-                    </div>
-                        <div class="flex space-x-2">
-                          <button class="text-gray-400 hover:text-gray-600">
-                            <i class="far fa-eye"></i>
-                          </button>
-                          <button class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-trash-alt"></i>
-                          </button>
-                          <button class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-edit"></i>
-                          </button>
-                        </div>
-                      </div>
-                   </div>
-                  </div>
-                </div>
-                {% comment %} {% empty %}
-
-                <div class="flex justify-center bg-darkGray text-sm rounded mt-10">
-                    <p class="text-sm">No Task In progress</p>
-                </div> {% endcomment %}
-                {% endfor %}
-              </div>
-            </div>
-            
-
-
-          <!-- Completed Task Column -->
-          <div>
-            <div
-              class="flex justify-between items-center gap-1 text-[14px] font-semibold border-2 border-borderColor px-3  py-1 rounded mb-4 mt-16 md:mt-0"
-            >
-              <h2>Completed Tasks <span class="text-[10px]" id="completed_counnt_con">({{ completed_tasks.count }})</span></h2>
-              <i class="fas fa-ellipsis-v"></i>
-            </div>
-            
-            <div id="completed_tasks_con" class="min-h-[50vh] sortable-list" data-column="Completed">
+          <div
+            id="completed_tasks_con"
+            class="min-h-[50vh] sortable-list"
+            data-column="Completed"
+          >
             {% for task in completed_tasks %}
             <div class="mt-10 handle" data-task-id="{{ task.id }}">
               <div class="flex gap-5 mb-2.5">
-                <span class="text-xs text-gray-500 py-1 px-3 rounded  shadow-lg {{ task.priority|priority_color }} "
+                <span
+                  class="text-xs text-gray-500 py-1 px-3 rounded  shadow-lg {{ task.priority|priority_color }} "
                   >{{ task.priority }}</span
                 >
-                <span class="text-xs text-purple-500 py-1 px-3 rounded shadow-lg"
-                  ><i class="far fa-clock me-2"></i>{{ task.get_formatted_due_date }}</span
+                <span
+                  class="text-xs text-purple-500 py-1 px-3 rounded shadow-lg"
+                  ><i class="far fa-clock me-2"></i>{{
+                  task.get_formatted_due_date }}</span
                 >
                 <span
-                  class="text-xs bg-purple-100 text-purple-500 py-1 px-3 rounded  shadow-lg"
+                  class="text-xs bg-purple-100 text-purple-500 py-1 px-3 rounded shadow-lg"
                   >{{ task.category|title }}</span
                 >
               </div>
-              <div class="bg-darkGray p-4 rounded shadow-md mb-4 flex flex-col h-[150px] justify-between py-2">
-               <div>
-                <h3 class="font-semibold mb-2">{{ task.title|title }}</h3>
-                <p class="text-sm text-gray-600 mb-4">
-                  {{ task.description|truncatechars:100  }}
-                </p>
-               </div>
-               <div class="">
-                <div class="flex items-center justify-between ">        
-                <div class="text-[8px] bg-[#374151] p-1 shadow rounded text-white">
-                    {{ task.assigned_to.username }}
+              <div
+                class="bg-darkGray p-4 rounded shadow-md mb-4 flex flex-col h-[150px] justify-between py-2"
+              >
+                <div>
+                  <h3 class="font-semibold mb-2">{{ task.title|title }}</h3>
+                  <p class="text-sm text-gray-600 mb-4">
+                    {{ task.description|truncatechars:100 }}
+                  </p>
                 </div>
+                <div class="">
+                  <div class="flex items-center justify-between">
+                    <div
+                      class="text-[8px] bg-[#374151] p-1 shadow rounded text-white"
+                    >
+                      {{ task.assigned_to.username }}
+                    </div>
                     <div class="flex space-x-2">
                       <button class="text-gray-400 hover:text-gray-600">
                         <i class="far fa-eye"></i>
@@ -443,54 +805,69 @@
                       </button>
                     </div>
                   </div>
-               </div>
+                </div>
               </div>
             </div>
             {% comment %} {% empty %}
             <div class="flex justify-center bg-darkGray text-sm rounded mt-10">
-                <p class="text-sm">No Completed Task</p>
-            </div> {% endcomment %}
-            {% endfor %}
+              <p class="text-sm">No Completed Task</p>
+            </div>
+            {% endcomment %} {% endfor %}
+          </div>
         </div>
+
+        <!-- Over-Due Column -->
+        <div>
+          <div
+            class="flex justify-between items-center gap-1 text-[14px] font-semibold border-2 border-borderColor px-3 py-1 rounded mb-4 mt-16 lg:mt-0"
+          >
+            <h2>
+              Over Due Tasks
+              <span class="text-[10px]" id="overdue_count_con"
+                >({{ overdue_tasks.count }})</span
+              >
+            </h2>
+            <i class="fas fa-ellipsis-v"></i>
           </div>
 
-          
-          <!-- Over-Due Column -->
-          <div>
-            <div
-              class="flex justify-between items-center gap-1 text-[14px] font-semibold border-2 border-borderColor px-3  py-1 rounded mb-4 mt-16 lg:mt-0"
-            >
-              <h2>Over Due Tasks <span class="text-[10px]" id="overdue_count_con">({{ overdue_tasks.count }})</span></h2>
-              <i class="fas fa-ellipsis-v"></i>
-            </div>
-            
-            <div id="overdue_task_con" class="min-h-[50vh] sortable-list" data-column="Overdue">
+          <div
+            id="overdue_task_con"
+            class="min-h-[50vh] sortable-list"
+            data-column="Overdue"
+          >
             {% for task in overdue_tasks %}
             <div class="mt-10 handle" data-task-id="{{ task.id }}">
               <div class="flex gap-5 mb-2.5">
-                <span class="text-xs text-gray-500 py-1 px-3 rounded  shadow-lg {{ task.priority|priority_color }} "
+                <span
+                  class="text-xs text-gray-500 py-1 px-3 rounded  shadow-lg {{ task.priority|priority_color }} "
                   >{{ task.priority }}</span
                 >
-                <span class="text-xs text-purple-500 py-1 px-3 rounded shadow-lg"
-                  ><i class="far fa-clock me-2"></i>{{ task.get_formatted_due_date }}</span
+                <span
+                  class="text-xs text-purple-500 py-1 px-3 rounded shadow-lg"
+                  ><i class="far fa-clock me-2"></i>{{
+                  task.get_formatted_due_date }}</span
                 >
                 <span
-                  class="text-xs bg-purple-100 text-purple-500 py-1 px-3 rounded  shadow-lg"
+                  class="text-xs bg-purple-100 text-purple-500 py-1 px-3 rounded shadow-lg"
                   >{{ task.category|title }}</span
                 >
               </div>
-              <div class="bg-darkGray p-4 rounded shadow-md mb-4 flex flex-col h-[150px] justify-between py-2">
-               <div>
-                <h3 class="font-semibold mb-2">{{ task.title|title }}</h3>
-                <p class="text-sm text-gray-600 mb-4">
-                  {{ task.description|truncatechars:100  }}
-                </p>
-               </div>
-               <div class="">
-                <div class="flex items-center justify-between ">        
-                <div class="text-[8px] bg-[#374151] p-1 shadow rounded text-white">
-                    {{ task.assigned_to.username }}
+              <div
+                class="bg-darkGray p-4 rounded shadow-md mb-4 flex flex-col h-[150px] justify-between py-2"
+              >
+                <div>
+                  <h3 class="font-semibold mb-2">{{ task.title|title }}</h3>
+                  <p class="text-sm text-gray-600 mb-4">
+                    {{ task.description|truncatechars:100 }}
+                  </p>
                 </div>
+                <div class="">
+                  <div class="flex items-center justify-between">
+                    <div
+                      class="text-[8px] bg-[#374151] p-1 shadow rounded text-white"
+                    >
+                      {{ task.assigned_to.username }}
+                    </div>
                     <div class="flex space-x-2">
                       <button class="text-gray-400 hover:text-gray-600">
                         <i class="far fa-eye"></i>
@@ -503,189 +880,336 @@
                       </button>
                     </div>
                   </div>
-               </div>
+                </div>
               </div>
             </div>
             {% comment %} {% empty %}
             <div class="flex justify-center bg-darkGray text-sm rounded mt-10">
-                <p class="text-sm">No Over Dued Task</p>
-            </div> {% endcomment %}
-            {% endfor %}
-        </div>
+              <p class="text-sm">No Over Dued Task</p>
+            </div>
+            {% endcomment %} {% endfor %}
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- FontAwesome for icons -->
-    <script
-      src="https://kit.fontawesome.com/a076d05399.js"
-      crossorigin="anonymous"
-    ></script>
+  <!-- Modal -->
 
-    <!-- JavaScript for Menu Toggle -->
-    <script>
-        if ($(window).width() < 1024) {
-            $("#nav-menu").slideUp(0);
+  {% if request.user.is_authenticated %}
+  <div
+    id="task-modal"
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm hidden"
+  >
+    <div class="max-w-[500px] w-full bg-white p-6 rounded shadow-lg">
+      <h2 class="text-lg font-semibold mb-4">Add New Task</h2>
+      <form>
+        <div class="mb-2">
+          <label for="task-name" class="block text-sm font-medium text-gray-700"
+            >Title</label
+          >
+          <input
+            type="text"
+            id="task-name"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div class="mb-2">
+          <label
+            for="task-category"
+            class="block text-sm font-medium text-gray-700"
+            >Category</label
+          >
+          <input
+            type="text"
+            id="task-category"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div class="mb-2">
+          <label
+            for="task-details"
+            class="block text-sm font-medium text-gray-700"
+            >Description</label
+          >
+          <textarea
+            id="task-details"
+            rows="3"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          ></textarea>
+        </div>
+        <div class="mb-2">
+          <label
+            for="task-status"
+            class="block text-sm font-medium text-gray-700"
+            >Status</label
+          >
+          <select
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            id="task-status"
+          >
+            <option value="In Progress">Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Overdue">Overdue</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label
+            for="task-priority"
+            class="block text-sm font-medium text-gray-700"
+            >Priority</label
+          >
+          <select
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            id="task-priority"
+          >
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label for="task-user" class="block text-sm font-medium text-gray-700"
+            >Assign to</label
+          >
+          <select
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            id="task-user"
+          >
+            <option value="{{ request.user.id }}">
+              Me ({{ request.user.username }})
+            </option>
+            {% for user in users %}
+            <option value="{{ user.id }}">{{ user.username }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-2 flex items-center gap-3">
+          <label for="task-details" class="text-sm font-medium text-gray-700"
+            >Due Date</label
+          >
+          <input
+            type="date"
+            id="due_date"
+            class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div class="flex justify-end">
+          <button
+            type="button"
+            id="close-modal"
+            class="mr-2 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="bg-darkBlue text-white py-2 px-4 rounded-lg"
+            id="task-submit"
+          >
+            Add Task
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- FontAwesome for icons -->
+  <script
+    src="https://kit.fontawesome.com/a076d05399.js"
+    crossorigin="anonymous"
+  ></script>
+
+  <!-- JavaScript for Menu Toggle -->
+  <script>
+    if ($(window).width() < 1024) {
+      $("#nav-menu").slideUp(0);
+    }
+
+    $("#menu-toggle").on("click", function () {
+      if ($(window).width() < 1024) {
+        $("#nav-menu").slideToggle("slow");
+      }
+    });
+
+    $(window).resize(function () {
+      if ($(window).width() >= 1024) {
+        $("#nav-menu").show();
+      } else {
+        $("#nav-menu").hide();
+      }
+    });
+
+    $("#datepickerend, #datepickerstart").datepicker();
+
+    $("#searchButton").click(function () {
+      fetchTask(create_search_url(url, getFilterSearchValue));
+    });
+
+    $("#fiterandsortButton").click(function () {
+      fetchTask(create_search_url(url, getFilterValue));
+    });
+
+    let url = "/api/";
+    let lastUrl = url;
+
+    // get the filter values from the dom
+    function getFilterSearchValue() {
+      const searchValue = $("#search_task").val();
+      const selectedPriority = $("input[name='priority_radio']:checked").val();
+      const selectedStatus = $("input[name='status_radio']:checked").val();
+      const selectedCategory = $("input[name='category_radio']:checked").val();
+      const selectedSortBy = $("input[name='sort_radio']:checked").val();
+      const start_date = $("#datepickerstart").val();
+      const end_date = $("#datepickerend").val();
+
+      return {
+        query: searchValue,
+        priority: selectedPriority,
+        status: selectedStatus,
+        category: selectedCategory,
+        start_date: start_date,
+        end_date: end_date,
+        sort_by: selectedSortBy,
+      };
+    }
+
+    function getFilterValue() {
+      const values = getFilterSearchValue();
+      const newValues = { ...values, query: "" };
+      return newValues;
+    }
+
+    //create the url with the query params
+    function create_search_url(url, filterValues) {
+      const filters = filterValues();
+      let queryParams = [];
+
+      // Iterate through filters and add non-empty values to queryParams
+      for (const key in filters) {
+        if (filters[key]) {
+          queryParams.push(`${key}=${encodeURIComponent(filters[key])}`);
         }
-    
-        $("#menu-toggle").on("click", function() {
-            if ($(window).width() < 1024) {
-                $("#nav-menu").slideToggle("slow");
-            }
-        });
+      }
 
-        $(window).resize(function() {
-            if ($(window).width() >= 1024) {
-                $("#nav-menu").show();
-            } else {
-                $("#nav-menu").hide();
-            }
-        });
-        
-        $( "#datepickerend, #datepickerstart" ).datepicker();
+      // Construct the final URL with query parameters
+      if (queryParams.length > 0) {
+        const queryString = queryParams.join("&");
+        return `${url}?${queryString}`;
+      } else {
+        return url;
+      }
+    }
 
-        $("#searchButton").click(function() {
-          fetchTask(create_search_url(url,getFilterSearchValue));
-          
-        });
-
-        $("#fiterandsortButton").click(function() {
-            fetchTask(create_search_url(url,getFilterValue));
-        });
-
-        let url = "/api/"
-        let lastUrl = url
-
-
-        // get the filter values from the dom
-        function getFilterSearchValue() {
-            const searchValue = $("#search_task").val();
-            const selectedPriority = $("input[name='priority_radio']:checked").val();
-            const selectedStatus = $("input[name='status_radio']:checked").val();
-            const selectedCategory = $("input[name='category_radio']:checked").val();
-            const selectedSortBy = $("input[name='sort_radio']:checked").val();
-            const start_date = $("#datepickerstart").val();
-            const end_date = $("#datepickerend").val();
-        
-            return {
-                query:searchValue,
-                priority:selectedPriority,
-                status:selectedStatus,
-                category:selectedCategory,
-                start_date:start_date,
-                end_date:end_date,
-                sort_by:selectedSortBy
-            };
-        }
-
-        function getFilterValue(){
-          const values = getFilterSearchValue();
-          const newValues = {...values,query:""}
-          return newValues;
-        }
-        
-        //create the url with the query params
-        function create_search_url(url,filterValues) {
-            const filters = filterValues();
-            let queryParams = [];
-        
-            // Iterate through filters and add non-empty values to queryParams
-            for (const key in filters) {
-                if (filters[key]) {
-                    queryParams.push(`${key}=${encodeURIComponent(filters[key])}`);
-                }
-            }
-        
-            // Construct the final URL with query parameters
-            if (queryParams.length > 0) {
-                const queryString = queryParams.join('&');
-                return `${url}?${queryString}`;
-            } else {
-                return url;
-            }
-        }
-        
-       // Define the async function to send HTTP requests
-async function SendHttpRequest(method, url, data = null) {
-    try {
+    // Define the async function to send HTTP requests
+    async function SendHttpRequest(method, url, data = null) {
+      try {
         // Use a Promise to wrap jQuery's AJAX call
         return new Promise((resolve, reject) => {
-            $.ajax({
-                url: url,
-                method: method.toUpperCase(),
-                headers: {
-                    "X-CSRFToken": Cookies.get('csrftoken')
-                },
-                dataType: 'json',
-                contentType: 'application/json',
-                data: data ? JSON.stringify(data) : null,
-                success: function(data) {
-                    resolve(data); // Resolve the Promise with the received data
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    let errorMessage = errorThrown || textStatus;
-                    if (jqXHR.responseJSON) {
-                        errorMessage = jqXHR.responseJSON; // Use the responseText as error message if available
-                    }
-                    reject(jqXHR); // Reject the Promise with the error message
-                }
-            });
+          $.ajax({
+            url: url,
+            method: method.toUpperCase(),
+            headers: {
+              "X-CSRFToken": Cookies.get("csrftoken"),
+            },
+            dataType: "json",
+            contentType: "application/json",
+            data: data ? JSON.stringify(data) : null,
+            success: function (data) {
+              resolve(data); // Resolve the Promise with the received data
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              let errorMessage = errorThrown || textStatus;
+              if (jqXHR.responseJSON) {
+                errorMessage = jqXHR.responseJSON; // Use the responseText as error message if available
+              }
+              reject(jqXHR); // Reject the Promise with the error message
+            },
+          });
         });
-    } catch (error) {
+      } catch (error) {
         throw new Error(`Error fetching data: ${error}`);
+      }
     }
-}
 
-// Example usage within an async function
-async function fetchTask(url,addcard=true) {
-    try {
+    // Example usage within an async function
+    async function fetchTask(url, addcard = true) {
+      try {
         const method = "GET";
-        const searchUrl = url
-        lastUrl = searchUrl
+        const searchUrl = url;
+        lastUrl = searchUrl;
 
-        const responseData = await SendHttpRequest(method, (searchUrl));
-        const { inProgressTasks, completedTasks, overdueTasks } = filterData(responseData)
-        loadTasks(inProgressTasks,"in_progress_tasks","No Task In progress", "in_progress_count_con",addcard)
-        loadTasks(completedTasks,"completed_tasks_con","No Completed Task", "completed_counnt_con",addcard)
-        loadTasks(overdueTasks,"overdue_task_con","No Over Dued Task","overdue_count_con",addcard)
+        const responseData = await SendHttpRequest(method, searchUrl);
+        const { inProgressTasks, completedTasks, overdueTasks } =
+          filterData(responseData);
+        loadTasks(
+          inProgressTasks,
+          "in_progress_tasks",
+          "No Task In progress",
+          "in_progress_count_con",
+          addcard
+        );
+        loadTasks(
+          completedTasks,
+          "completed_tasks_con",
+          "No Completed Task",
+          "completed_counnt_con",
+          addcard
+        );
+        loadTasks(
+          overdueTasks,
+          "overdue_task_con",
+          "No Over Dued Task",
+          "overdue_count_con",
+          addcard
+        );
         // $(".sortable-list").sortable( "refresh" );
-        
-    } catch (e) {
-        const error = e.responseJSON
-        error.forEach(err=>{
-            iziToast.error({
-                message: err,
-                position: 'topCenter',
-                class: "fixed top-20",
-            });
-        })
+      } catch (e) {
+        const error = e.responseJSON;
+        error.forEach((err) => {
+          iziToast.error({
+            message: err,
+            position: "topCenter",
+            class: "fixed top-20",
+          });
+        });
+      }
     }
-}
 
-function loadTasks(tasksData,id,emptyMessage,countConId,addcard=true) {
+    function loadTasks(
+      tasksData,
+      id,
+      emptyMessage,
+      countConId,
+      addcard = true
+    ) {
+      const $taskListContainer = $(`#${id}`);
+      const $taskCountContainer = $(`#${countConId}`);
 
-    const $taskListContainer = $(`#${id}`);
-    const $taskCountContainer = $(`#${countConId}`)
+      $taskCountContainer.empty();
 
-    $taskCountContainer.empty()
+      $taskCountContainer.text(`(${tasksData.length})`);
 
-    $taskCountContainer.text(`(${tasksData.length})`)
-
-
-    if (addcard){
+      if (addcard) {
         $taskListContainer.empty();
-    $.each(tasksData, function(index, task) {
-        // Create elements to display task information
-        const $taskElement = $(`<div data-task-id=${task.id} class="handle"></div>`);
-        $taskElement.html(`
+        $.each(tasksData, function (index, task) {
+          // Create elements to display task information
+          const $taskElement = $(
+            `<div data-task-id=${task.id} class="handle"></div>`
+          );
+          $taskElement.html(`
         <div class="mt-10" >
             <div class="flex gap-5 mb-2.5">
-              <span class="text-xs text-gray-500 py-1 px-3 rounded  shadow-lg ${priorityColor(task.priority)}"
+              <span class="text-xs text-gray-500 py-1 px-3 rounded  shadow-lg ${priorityColor(
+                task.priority
+              )}"
                 >${task.priority}</span
               >
               <span class="text-xs text-purple-500 py-1 px-3 rounded shadow-lg"
-                ><i class="far fa-clock me-2"></i>${task.formatted_due_date}</span
+                ><i class="far fa-clock me-2"></i>${
+                  task.formatted_due_date
+                }</span
               >
               <span
                 class="text-xs bg-purple-100 text-purple-500 py-1 px-3 rounded  shadow-lg"
@@ -696,7 +1220,7 @@ function loadTasks(tasksData,id,emptyMessage,countConId,addcard=true) {
              <div>
               <h3 class="font-semibold mb-2">${titleCase(task.title)}</h3>
               <p class="text-sm text-gray-600 mb-4">
-                ${truncateChars(task.description,100)}
+                ${truncateChars(task.description, 100)}
               </p>
              </div>
              <div class="">
@@ -720,95 +1244,175 @@ function loadTasks(tasksData,id,emptyMessage,countConId,addcard=true) {
             </div>
           </div>
         `);
-        $taskListContainer.append($taskElement);
-    });}
-    
-    // show no task massage
-    // if (!tasksData.length){
-    //     $taskListContainer.append(`
-    //     <div class="flex justify-center bg-darkGray text-sm rounded mt-10">
-    //         <p class="text-sm">${emptyMessage}</p>
-    //     </div>
-    //     `)
-    // }
-}
-
-function priorityColor(value) {
-    const colorMap = {
-        'high': 'bg-red-100',
-        'medium': 'bg-darkGray',
-        'low': 'bg-green-100',
-    };
-    return colorMap[value.toLowerCase()] || 'bg-red-100';
-}
-
-function titleCase(str) {
-    return str.toLowerCase().split(' ').map(function(word) {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-    }).join(' ');
-}
-
-function truncateChars(str, maxChars) {
-    if (str.length <= maxChars) {
-        return str;
-    }
-    return str.slice(0, maxChars) + '...';
-}
-
-function filterData(taskData) {
-    const inProgressTasks = taskData.filter(task => task.status.toLowerCase() === "in progress");
-    const completedTasks = taskData.filter(task => task.status.toLowerCase() === "completed");
-    const overdueTasks = taskData.filter(task => task.status.toLowerCase() === "overdue");
-
-    return { inProgressTasks, completedTasks, overdueTasks };
-}
-
-//----------------------- sorting and dragging----------
-let isSortingCancelled = false;
-$(".sortable-list").sortable({
-    connectWith: ".sortable-list",
-    dropOnEmpty: true,
-    stop: function(event, ui) {
-            handleUpdateEvent(event, ui); 
-    }
-}).disableSelection();
-
-
-
-async function handleUpdateEvent(event, ui) {
-    const itemId = ui.item.attr("data-task-id");
-    const columnName = ui.item.parent().attr("data-column");
-    try{
-        const data = {status:columnName}
-        const url = `/api/${itemId}/`
-        const responseData = await SendHttpRequest("PATCH",url,data)
-        fetchTask(lastUrl,false)
-    }catch(e){
-        const status = e.status
-        $(".sortable-list").sortable( "cancel" );
-        if (status == 403){
-        iziToast.warning({
-            message: "You cannot update status of task not assigned to you",
-            position: 'topCenter',
-            class: "fixed top-20",
-            timeout: 2000,
+          $taskListContainer.append($taskElement);
         });
-      }else{
-        iziToast.error({
-            message: "Login to update status of task",
-            position: 'topCenter',
+      }
+
+      // show no task massage
+      // if (!tasksData.length){
+      //     $taskListContainer.append(`
+      //     <div class="flex justify-center bg-darkGray text-sm rounded mt-10">
+      //         <p class="text-sm">${emptyMessage}</p>
+      //     </div>
+      //     `)
+      // }
+    }
+
+    function priorityColor(value) {
+      const colorMap = {
+        high: "bg-red-100",
+        medium: "bg-darkGray",
+        low: "bg-green-100",
+      };
+      return colorMap[value.toLowerCase()] || "bg-red-100";
+    }
+
+    function titleCase(str) {
+      return str
+        .toLowerCase()
+        .split(" ")
+        .map(function (word) {
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        })
+        .join(" ");
+    }
+
+    function truncateChars(str, maxChars) {
+      if (str.length <= maxChars) {
+        return str;
+      }
+      return str.slice(0, maxChars) + "...";
+    }
+
+    function filterData(taskData) {
+      const inProgressTasks = taskData.filter(
+        (task) => task.status.toLowerCase() === "in progress"
+      );
+      const completedTasks = taskData.filter(
+        (task) => task.status.toLowerCase() === "completed"
+      );
+      const overdueTasks = taskData.filter(
+        (task) => task.status.toLowerCase() === "overdue"
+      );
+
+      return { inProgressTasks, completedTasks, overdueTasks };
+    }
+
+    //----------------------- sorting and dragging----------
+    let isSortingCancelled = false;
+    $(".sortable-list")
+      .sortable({
+        connectWith: ".sortable-list",
+        dropOnEmpty: true,
+        stop: function (event, ui) {
+          handleUpdateEvent(event, ui);
+        },
+      })
+      .disableSelection();
+
+    async function handleUpdateEvent(event, ui) {
+      const itemId = ui.item.attr("data-task-id");
+      const columnName = ui.item.parent().attr("data-column");
+      try {
+        const data = { status: columnName };
+        const url = `/api/${itemId}/`;
+        const responseData = await SendHttpRequest("PATCH", url, data);
+        fetchTask(lastUrl, false);
+      } catch (e) {
+        const status = e.status;
+        $(".sortable-list").sortable("cancel");
+        if (status == 403) {
+          iziToast.warning({
+            message: "You cannot update status of task not assigned to you",
+            position: "topCenter",
             class: "fixed top-20",
             timeout: 2000,
           });
+        } else {
+          iziToast.error({
+            message: "Login to update status of task",
+            position: "topCenter",
+            class: "fixed top-20",
+            timeout: 2000,
+          });
+        }
       }
     }
-    
-}
 
+    // ---------------------------------------  Modal Actions ----------------------------------------
 
+    const $addTaskBtn = $("#add-task-btn");
+    const $taskModal = $("#task-modal");
+    const $closeModal = $("#close-modal");
+    const $taskSubmitBtn = $("#task-submit");
 
+    function initializeModalInputs() {
+      const $taskNameInput = $("#task-name");
+      const $taskCategoryInput = $("#task-category");
+      const $taskUserInput = $("#task-user");
+      const $taskDetailsTextarea = $("#task-details");
+      const $taskStatusSelect = $("#task-status");
+      const $taskPrioritySelect = $("#task-priority");
+      const $dueDateInput = $("#due_date");
 
+      return {
+        $taskNameInput: $taskNameInput,
+        $taskCategoryInput: $taskCategoryInput,
+        $taskUserInput: $taskUserInput,
+        $taskDetailsTextarea: $taskDetailsTextarea,
+        $taskStatusSelect: $taskStatusSelect,
+        $taskPrioritySelect: $taskPrioritySelect,
+        $dueDateInput: $dueDateInput,
+      };
+    }
 
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-    {% endblock content %}
+    function mapFormData() {
+      const modalInputs = initializeModalInputs(); // Get modal inputs
+
+      // Extract values using .val() and map to form data object
+      const formData = {
+        title: modalInputs.$taskNameInput.val(),
+        description: modalInputs.$taskDetailsTextarea.val(),
+        status: modalInputs.$taskStatusSelect.val(),
+        priority: modalInputs.$taskPrioritySelect.val(),
+        due_date: modalInputs.$dueDateInput.val(),
+        category: modalInputs.$taskCategoryInput.val(), 
+        assigned_to: modalInputs.$taskUserInput.val(),
+      };
+
+      return formData;
+    }
+
+    $taskSubmitBtn.click(async function (e) {
+      e.preventDefault();
+      // Example usage:
+      const formData = mapFormData();
+      const url = "/api/"
+      try{
+        const response = await SendHttpRequest("POST",url, formData)
+        console.log(response);
+      }
+      catch(e){
+        console.log(e);
+      }
+    });
+
+    $addTaskBtn.on("click", function () {
+      $taskModal.removeClass("hidden");
+    });
+
+    $closeModal.on("click", function () {
+      $taskModal.addClass("hidden");
+    });
+
+    $(window).on("click", function (event) {
+      if ($(event.target).is($taskModal)) {
+        $taskModal.addClass("hidden");
+      }
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
+</div>
+
+{% endblock content %}
