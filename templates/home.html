@@ -124,6 +124,7 @@
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                 </svg>
                 </button>
+                
           </div>
         <!-- Add Task -->
           <div class="flex items-center gap-5">
@@ -535,13 +536,14 @@
         $( "#datepickerend, #datepickerstart" ).datepicker();
 
         $("#searchButton").click(function() {
-            fetchTask();
+          fetchTask(create_search_url(url,getFilterSearchValue));
+          fetchTask(create_search_url(url,getFilterValue));
         });
         let url = "http://127.0.0.1:8000/api/"
 
 
         // get the filter values from the dom
-        function getFilterValue() {
+        function getFilterSearchValue() {
             const searchValue = $("#search_task").val();
             const selectedPriority = $("input[name='priority_radio']:checked").val();
             const selectedStatus = $("input[name='status_radio']:checked").val();
@@ -558,10 +560,16 @@
                 end_date:end_date
             };
         }
+
+        function getFilterValue(){
+          const values = getFilterSearchValue();
+          values = {...values,query:""}
+          return values;
+        }
         
         //create the url with the query params
-        function create_search_url(url) {
-            const filters = getFilterValue();
+        function create_search_url(url,filterValues) {
+            const filters = filterValues();
             let queryParams = [];
         
             // Iterate through filters and add non-empty values to queryParams
@@ -609,10 +617,10 @@ async function SendHttpRequest(method, url, data = null) {
 }
 
 // Example usage within an async function
-async function fetchTask() {
+async function fetchTask(url) {
     try {
         const method = "GET";
-        const searchUrl = create_search_url(url);
+        const searchUrl = url
 
         const responseData = await SendHttpRequest(method, (searchUrl));
         const { inProgressTasks, completedTasks, overdueTasks } = filterData(responseData)
