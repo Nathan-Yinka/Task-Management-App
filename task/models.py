@@ -7,7 +7,7 @@ User = get_user_model()
 
 class TaskQuerySet(models.QuerySet):
   
-    def search(self, query=None, status=None, priority=None, start_date=None, end_date=None, category=None):
+    def search(self, query=None, status=None, priority=None, start_date=None, end_date=None, category=None, sort_by=None):
         filters = Q()
         
         if query:
@@ -24,8 +24,16 @@ class TaskQuerySet(models.QuerySet):
         
         if category:
             filters &= Q(category__iexact=category)
+            
+        qs = self.filter(filters)
+            
+        if sort_by:
+            if sort_by == "priority":
+                qs = qs.order_by_priority()
+            else:
+                qs = qs.order_by(sort_by)
         
-        return self.filter(filters)
+        return qs
 
     def completed(self):
         return self.filter(status="Completed").order_by_priority()
@@ -67,9 +75,9 @@ class TaskManager(models.Manager):
     def order_by_priority(self):
         return self.get_queryset().order_by_priority()
       
-    def search(self, query=None, status=None, priority=None, start_date=None, end_date=None, category=None):
+    def search(self, query=None, status=None, priority=None, start_date=None, end_date=None, category=None, sort_by=None):
         return self.get_queryset().search(query=query, status=status, priority=priority, start_date=start_date, 
-            end_date=end_date, category=category)
+            end_date=end_date, category=category, sort_by=sort_by)
 
 
 class Task(models.Model):

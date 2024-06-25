@@ -124,6 +124,8 @@
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                 </svg>
                 </button>
+
+                <button type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4 md:mb-0" id="fiterandsortButton">Apply</button>
                 
           </div>
         <!-- Add Task -->
@@ -308,13 +310,13 @@
       </li>
       <li>
         <div class="flex items-center">
-            <input  id="sortbydefault-radio-2" type="radio" value="" name="sort_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+            <input  id="sortbydefault-radio-2" type="radio" value="due_date" name="sort_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
             <label for="sortbydefault-radio-2" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Due Date</label>
         </div>
       </li>
       <li>
         <div class="flex items-center">
-            <input id="sortbydefault-radio-3" type="radio" value="" name="sort_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+            <input id="sortbydefault-radio-3" type="radio" value="priority" name="sort_radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
             <label for="sortbydefault-radio-3" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Priority</label>
         </div>
       </li>
@@ -332,7 +334,7 @@
                 <div
                   class="flex justify-between items-center gap-1 text-[14px] font-semibold border-2 border-borderColor px-3  py-1 rounded mb-4"
                 >
-                  <h2>In Progress <span class="text-[10px]">({{ in_progress_tasks.count }})</span></h2>
+                  <h2>In Progress <span class="text-[10px]" id="in_progress_count_con">({{ in_progress_tasks.count }})</span></h2>
                   <i class="fas fa-ellipsis-v"></i>
                 </div>
                 
@@ -394,10 +396,11 @@
             <div
               class="flex justify-between items-center gap-1 text-[14px] font-semibold border-2 border-borderColor px-3  py-1 rounded mb-4 mt-16 md:mt-0"
             >
-              <h2>Completed Tasks <span class="text-[10px]">({{ completed_tasks.count }})</span></h2>
+              <h2>Completed Tasks <span class="text-[10px]" id="completed_counnt_con">({{ completed_tasks.count }})</span></h2>
               <i class="fas fa-ellipsis-v"></i>
             </div>
             
+            <div id="completed_tasks_con">
             {% for task in completed_tasks %}
             <div class="mt-10">
               <div class="flex gap-5 mb-2.5">
@@ -441,9 +444,10 @@
             </div>
             {% empty %}
             <div class="flex justify-center bg-darkGray text-sm rounded mt-10">
-                <p class="text-sm">No Task In Completed</p>
+                <p class="text-sm">No Completed Task</p>
             </div>
             {% endfor %}
+        </div>
           </div>
 
           
@@ -452,10 +456,11 @@
             <div
               class="flex justify-between items-center gap-1 text-[14px] font-semibold border-2 border-borderColor px-3  py-1 rounded mb-4 mt-16 lg:mt-0"
             >
-              <h2>Over Due Tasks <span class="text-[10px]">({{ overdue_tasks.count }})</span></h2>
+              <h2>Over Due Tasks <span class="text-[10px]" id="overdue_count_con">({{ overdue_tasks.count }})</span></h2>
               <i class="fas fa-ellipsis-v"></i>
             </div>
             
+            <div id="overdue_task_con">
             {% for task in overdue_tasks %}
             <div class="mt-10">
               <div class="flex gap-5 mb-2.5">
@@ -502,6 +507,7 @@
                 <p class="text-sm">No Over Dued Task</p>
             </div>
             {% endfor %}
+        </div>
           </div>
         </div>
       </div>
@@ -537,8 +543,13 @@
 
         $("#searchButton").click(function() {
           fetchTask(create_search_url(url,getFilterSearchValue));
-          fetchTask(create_search_url(url,getFilterValue));
+          
         });
+
+        $("#fiterandsortButton").click(function() {
+            fetchTask(create_search_url(url,getFilterValue));
+        });
+
         let url = "http://127.0.0.1:8000/api/"
 
 
@@ -548,6 +559,7 @@
             const selectedPriority = $("input[name='priority_radio']:checked").val();
             const selectedStatus = $("input[name='status_radio']:checked").val();
             const selectedCategory = $("input[name='category_radio']:checked").val();
+            const selectedSortBy = $("input[name='sort_radio']:checked").val();
             const start_date = $("#datepickerstart").val();
             const end_date = $("#datepickerend").val();
         
@@ -557,14 +569,15 @@
                 status:selectedStatus,
                 category:selectedCategory,
                 start_date:start_date,
-                end_date:end_date
+                end_date:end_date,
+                sort_by:selectedSortBy
             };
         }
 
         function getFilterValue(){
           const values = getFilterSearchValue();
-          values = {...values,query:""}
-          return values;
+          const newValues = {...values,query:""}
+          return newValues;
         }
         
         //create the url with the query params
@@ -624,7 +637,9 @@ async function fetchTask(url) {
 
         const responseData = await SendHttpRequest(method, (searchUrl));
         const { inProgressTasks, completedTasks, overdueTasks } = filterData(responseData)
-        loadTasks(inProgressTasks,"in_progress_tasks","No Task In progress")
+        loadTasks(inProgressTasks,"in_progress_tasks","No Task In progress", "in_progress_count_con")
+        loadTasks(completedTasks,"completed_tasks_con","No Completed Task", "completed_counnt_con")
+        loadTasks(overdueTasks,"overdue_task_con","No Over Dued Task","overdue_count_con")
     } catch (error) {
         console.error( error);
         error.forEach(err=>{
@@ -637,10 +652,14 @@ async function fetchTask(url) {
     }
 }
 
-function loadTasks(tasksData,id,emptyMessage) {
+function loadTasks(tasksData,id,emptyMessage,countConId) {
 
     const $taskListContainer = $(`#${id}`);
+    const $taskCountContainer = $(`#${countConId}`)
     $taskListContainer.empty();
+    $taskCountContainer.empty()
+
+    $taskCountContainer.text(`(${tasksData.length})`)
 
     if (!tasksData.length){
         $taskListContainer.append(`
