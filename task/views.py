@@ -6,7 +6,8 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView,FormView
 from django.contrib.auth import login, authenticate
 
-from rest_framework import generics
+from rest_framework import generics,status
+from rest_framework.exceptions import PermissionDenied
 
 from core.mixins import TaskQueryMixin
 from core.permissions import IsAssignedOrReadOnly
@@ -57,6 +58,12 @@ class TaskRetreieveUpdateDeleteApiView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TaskSerializer
     queryset = Task.objects.all()
     permission_classes = [IsAssignedOrReadOnly]
+    
+    def permission_denied(self, request, message=None, code=None):
+        if not request.user.is_authenticated:
+            raise PermissionDenied(detail='Authentication credentials were not provided.', code=status.HTTP_401_UNAUTHORIZED)
+        else:
+            raise PermissionDenied(detail=message, code=code)
         
         
 # -------------------- User Authentication ---------------------------------

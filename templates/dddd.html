@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sortable Example</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        .sortable-placeholder {
+            border: 1px dashed #ccc;
+            background-color: #f9f9f9;
+            height: 50px;
+            margin: 10px 0;
+        }
+        .connectedSortable {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 200px;
+        }
+        .connectedSortable li {
+            margin: 0 0 10px 0;
+            padding: 10px;
+            font-size: 1.2em;
+            height: 50px;
+            background-color: #f3f3f3;
+            border: 1px solid #ccc;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+</head>
+<body>
+
+<ul id="in_progress_tasks" class="connectedSortable">
+    <li id="task1">Task 1</li>
+    <li id="task2">Task 2</li>
+</ul>
+
+<ul id="completed_tasks_con" class="connectedSortable">
+    <li id="task3">Task 3</li>
+</ul>
+
+<ul id="overdue_task_con" class="connectedSortable">
+    <li id="task4">Task 4</li>
+</ul>
+
+<script>
+$(function() {
+    $(".connectedSortable").sortable({
+        connectWith: ".connectedSortable",
+        dropOnEmpty: true,
+        placeholder: "sortable-placeholder",
+        update: function(event, ui) {
+            const taskId = ui.item.attr("id");
+            const newStatus = $(this).attr("id");
+            console.log(`Task ${taskId} moved to ${newStatus}`);
+            // Optionally send an AJAX request to update task status
+        }
+    }).disableSelection();
+});
+</script>
+
+</body>
+</html>
