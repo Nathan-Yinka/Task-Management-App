@@ -6,15 +6,13 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView,FormView
 from django.contrib.auth import login, authenticate
 
-from rest_framework import generics,status
-from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
-from rest_framework import permissions
+from rest_framework import generics
 
 from core.mixins import TaskQueryMixin
 from core.permissions import IsAssignedOrReadOnly
 from .models import Task
 from .serializers import TaskSerializer,TaskReadSerializer
-from .form import TaskForm,SignUpForm,LoginForm
+from .form import SignUpForm,LoginForm
 
 User = get_user_model()
 

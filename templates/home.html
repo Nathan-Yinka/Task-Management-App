@@ -693,8 +693,7 @@
                 >
                 <span
                   class="text-xs text-purple-500 py-1 px-3 rounded shadow-lg"
-                  ><i class="far fa-clock me-2"></i>{{
-                  task.get_formatted_due_date }}</span
+                  ><i class="far fa-clock me-2"></i>{{ task.get_formatted_due_date }}</span
                 >
                 <span
                   class="text-xs bg-purple-100 text-purple-500 py-1 px-3 rounded shadow-lg"
@@ -769,8 +768,7 @@
                 >
                 <span
                   class="text-xs text-purple-500 py-1 px-3 rounded shadow-lg"
-                  ><i class="far fa-clock me-2"></i>{{
-                  task.get_formatted_due_date }}</span
+                  ><i class="far fa-clock me-2"></i>{{ task.get_formatted_due_date }}</span
                 >
                 <span
                   class="text-xs bg-purple-100 text-purple-500 py-1 px-3 rounded shadow-lg"
@@ -844,8 +842,7 @@
                 >
                 <span
                   class="text-xs text-purple-500 py-1 px-3 rounded shadow-lg"
-                  ><i class="far fa-clock me-2"></i>{{
-                  task.get_formatted_due_date }}</span
+                  ><i class="far fa-clock me-2"></i>{{ task.get_formatted_due_date }}</span
                 >
                 <span
                   class="text-xs bg-purple-100 text-purple-500 py-1 px-3 rounded shadow-lg"
@@ -948,7 +945,7 @@
             class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             id="task-status"
           >
-            <option value="In Progress">Progress</option>
+            <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
             <option value="Overdue">Overdue</option>
           </select>
@@ -1366,6 +1363,16 @@
       };
     }
 
+    function clearModalInputs(inputs) {
+      inputs.$taskNameInput.val('');
+      inputs.$taskCategoryInput.val('');
+      inputs.$taskUserInput.val('');
+      inputs.$taskDetailsTextarea.val('');
+      inputs.$taskStatusSelect.val('');
+      inputs.$taskPrioritySelect.val('');
+      inputs.$dueDateInput.val('');
+  }
+
     function mapFormData() {
       const modalInputs = initializeModalInputs(); // Get modal inputs
 
@@ -1390,12 +1397,38 @@
       const url = "/api/"
       try{
         const response = await SendHttpRequest("POST",url, formData)
-        console.log(response);
+        fetchTask(lastUrl,true)
+        const inputs = initializeModalInputs();
+        clearModalInputs(inputs);
+        $taskModal.addClass("hidden");
+        iziToast.success({
+          message: "Task created successfully",
+          position: "topCenter",
+          class: "fixed top-20",
+          timeout: 3000,
+      });
+
       }
       catch(e){
-        console.log(e);
+        errors = e.responseJSON
+        displayErrors(errors);
       }
     });
+
+    function displayErrors(errors) {
+      for (const [title, messages] of Object.entries(errors)) {
+          messages.forEach(message => {
+              iziToast.error({
+                  title: title.charAt(0).toUpperCase() + title.slice(1),
+                  message: "This field isn't Valid",
+                  position: "topRight",
+                  class: "fixed top-20",
+                  timeout: 5000,
+              });
+          });
+      }
+  }
+  
 
     $addTaskBtn.on("click", function () {
       $taskModal.removeClass("hidden");

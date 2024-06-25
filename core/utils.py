@@ -1,6 +1,6 @@
 # utils.py
 
-from datetime import datetime
+from datetime import datetime,timedelta
 
 class DateValidationUtility:
     DATE_FORMAT = "%Y-%m-%d"
@@ -35,3 +35,15 @@ class DateValidationUtility:
             errors.append("end_date must be greater than or equal to start_date.")
         
         return parsed_start_date, parsed_end_date, errors
+
+
+def get_formatted_due_date(due_date):
+        now = datetime.now()
+        tomorrow = now + timedelta(days=1)
+        
+        if due_date.date() == now.date():
+            return due_date.strftime("%I:%M %p")  # Return time alone if due today
+        elif due_date.date() == tomorrow.date():
+            return "Tomorrow"  # Return "Tomorrow" if due tomorrow
+        else:
+            return due_date.strftime("%Y/%m/%d")  # Return full date for other days
