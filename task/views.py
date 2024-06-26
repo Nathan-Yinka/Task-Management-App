@@ -8,7 +8,7 @@ from django.contrib.auth import login, authenticate
 
 from rest_framework import generics
 
-from core.mixins import TaskQueryMixin
+from core.mixins import TaskQueryMixin,TaskSerializerMixin
 from core.permissions import IsAssignedOrReadOnly
 from .models import Task
 from .serializers import TaskSerializer,TaskReadSerializer
@@ -50,24 +50,15 @@ class TaskListView(ListView):
         return categories
         
 
-class TaskListApiView(TaskQueryMixin, generics.ListCreateAPIView):
+class TaskListApiView(TaskSerializerMixin, TaskQueryMixin, generics.ListCreateAPIView):
     queryset = Task.objects.all()
 
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return TaskReadSerializer
-        else:
-            return TaskSerializer
+    
         
-class TaskRetreieveUpdateDeleteApiView(generics.RetrieveUpdateDestroyAPIView):
+class TaskRetreieveUpdateDeleteApiView(TaskSerializerMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     permission_classes = [IsAssignedOrReadOnly]
 
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return TaskReadSerializer
-        else:
-            return TaskSerializer
         
 # -------------------- User Authentication ---------------------------------
 

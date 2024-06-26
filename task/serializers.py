@@ -41,7 +41,7 @@ class TaskSerializer(serializers.ModelSerializer):
 class TaskReadSerializer(serializers.ModelSerializer):
     formatted_due_date = serializers.SerializerMethodField(read_only=True)
     assigned_to = UserSerializer(read_only=True)
-
+    owner = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Task
         fields = '__all__'
@@ -49,3 +49,9 @@ class TaskReadSerializer(serializers.ModelSerializer):
             
     def get_formatted_due_date(self, obj):
         return obj.get_formatted_due_date()
+    
+    def get_owner(self, obj):
+        request = self.context.get('request')
+        if request and request.user == obj.assigned_to:
+            return True
+        return False

@@ -3,6 +3,7 @@ from datetime import datetime
 from rest_framework.exceptions import ValidationError
 
 from task.models import Task
+from task.serializers import TaskReadSerializer,TaskSerializer
 from .utils import DateValidationUtility
 
 
@@ -45,3 +46,17 @@ class TaskQueryMixin:
         qs = super().get_queryset().search(query=query, status=status, priority=priority, start_date=start_date, 
             end_date=end_date, category=category,sort_by=sort_by)
         return qs
+    
+    
+class TaskSerializerMixin:
+    
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return TaskReadSerializer
+        else:
+            return TaskSerializer
+        
+    def get_serializer_context(self):
+            context = super().get_serializer_context()
+            context['request'] = self.request
+            return context
