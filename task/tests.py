@@ -6,8 +6,6 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from task.models import Task
-from task.serializers import TaskSerializer, TaskReadSerializer
-from core.permissions import IsAssignedOrReadOnly
 from django.contrib.auth.models import User
 from task.form import SignUpForm, LoginForm 
 from django.test import TestCase, Client
