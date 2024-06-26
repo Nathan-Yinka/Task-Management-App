@@ -79,8 +79,8 @@ Ensure you have the following installed:
 
 1. Clone the repository from GitHub:
 ```
-    git clone <repository-url>
-    cd <project-directory>
+    git clone https://github.com/Nathan-Yinka/Task-Management-App.git
+    cd Task-Management-App
 ```
 
 
@@ -128,9 +128,10 @@ Ensure you have the following installed:
 
 4. Start the development server:
 ```
-    localhost:8000
+    python manage.py runserver
 ```
 
+- server is running on localhost:8000
 ---
 
 ## 3. Backend Development
