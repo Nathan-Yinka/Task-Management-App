@@ -95,12 +95,12 @@ class Task(models.Model):
     ]
       
       
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=40)
     description = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES)
     due_date = models.DateTimeField()
-    category = models.CharField(max_length=100)
+    category = models.CharField(max_length=20)
     assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tasks")
     
     

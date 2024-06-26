@@ -403,7 +403,7 @@ function displayErrors(errors) {
       messages.forEach(message => {
           iziToast.error({
               title: title.charAt(0).toUpperCase() + title.slice(1),
-              message: "This field isn't Valid",
+              message: message,
               position: "topRight",
               class: "fixed top-20",
               timeout: 5000,
@@ -579,11 +579,11 @@ try{
 }
 catch(e){
   errors = e.responseJSON
-  displayErrors(errors);
+  displayErrors2(errors);
 }
 });
 
-function displayErrors(errors) {
+function displayErrors2(errors) {
 for (const [title, messages] of Object.entries(errors)) {
     messages.forEach(message => {
         iziToast.error({

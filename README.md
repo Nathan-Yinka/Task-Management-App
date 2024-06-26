@@ -1,5 +1,17 @@
 # Task Management System Documentation
 
+![Task Management System](/static//images/Screenshot%202024-06-26%20at%205.49.57%20AM.png)
+
+
+## Test Login Credentials
+
+You can use the following credentials to log in and explore the Task Management System. This user already has some test tasks assigned to them for demonstration purposes.
+
+- **Username:** testuser
+- **Password:** TestUserPassword12345
+
+Feel free to add, edit, or delete tasks to test the functionality of the system.
+
 ## Table of Contents
 
 1. **Introduction**
